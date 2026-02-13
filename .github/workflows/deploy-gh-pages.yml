@@ -2,7 +2,7 @@ name: Build & Deploy Bookdown to GitHub Pages
 
 on:
   push:
-    branches: [main]   # change to free-dev if that's your pattern
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -12,10 +12,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
+
+      - name: Set up Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
 
       - name: Install system dependencies
         run: |
