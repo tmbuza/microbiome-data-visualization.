@@ -6,4 +6,7 @@
 
 docs/
 venv/
-renv/
+
+# renv (commit infrastructure + lockfile, ignore heavy library)
+renv/library/
+renv/staging/
