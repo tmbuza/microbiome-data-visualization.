@@ -10,3 +10,5 @@ venv/
 # renv (commit infrastructure + lockfile, ignore heavy library)
 renv/library/
 renv/staging/
+_bookdown_files/
+microbiome-data-visualization.Rmd

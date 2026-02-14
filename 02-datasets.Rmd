@@ -1,1 +1,100 @@
-#
+# Datasets {#datasets}
+
+This guide uses the **QIIME2 Moving Pictures** demo dataset.
+
+The data are downloaded as QIIME2 artifacts and converted into a single
+`phyloseq` object using reproducible scripts:
+
+-   `scripts/00-download-qiime2-demo-data.R`
+-   `scripts/01-create-phyloseq-object.R`
+
+Those scripts:
+
+-   download the feature table, taxonomy, and metadata
+-   align sample identifiers
+-   construct a validated `phyloseq` object
+-   save a canonical `.rds` file for reuse across chapters
+
+From this point onward, we work with one structured object.
+
+## Load the canonical object
+
+``` {r}
+ps <- readRDS("data/moving-pictures-ps.rds")
+ps
+```
+
+::: cdi-message
+A microbiome dataset is not a single table.
+
+It is a coordinated structure containing: - an abundance matrix -
+sample-level metadata - taxonomic annotation
+
+All components must align exactly.
+:::
+
+## Inspect the OTU Table
+
+``` {r}
+otu <- as(otu_table(ps), "matrix")
+
+if (!taxa_are_rows(ps)) {
+  otu <- t(otu)
+}
+
+otu[1:6, 1:6]
+```
+
+::: cdi-message
+This is a small slice of the count matrix.
+
+-   Rows represent taxa (ASVs)
+-   Columns represent samples
+-   Values are raw read counts
+
+Most entries are zero.
+
+Sparsity is not a technical artifact --- it is a biological reality.
+:::
+
+## Inspect Sample Metadata
+
+``` {r}
+head(sample_data(ps))
+```
+
+::: cdi-message
+Metadata provides the biological and experimental context.
+
+Without metadata, abundance values have no meaning. Visualization is
+always performed relative to metadata.
+:::
+
+## Inspect Taxonomy
+
+``` {r}
+head(tax_table(ps))
+```
+
+::: cdi-message
+Taxonomy links sequence variants to biological hierarchy.
+
+Aggregation (for example genus-level barplots) depends entirely on this
+mapping. If taxonomy is inconsistent, interpretation becomes unstable.
+:::
+
+## Structural Integrity
+
+``` {r}
+all(sample_names(ps) == rownames(sample_data(ps)))
+```
+
+::: cdi-message
+A valid `phyloseq` object guarantees alignment across components.
+
+Many downstream errors originate from mismatched sample identifiers.
+:::
+
+:::next
+Next → [Data Structure and Prevalence](#data-structure-prevalence)
+:::

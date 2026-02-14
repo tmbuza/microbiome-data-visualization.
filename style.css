@@ -1,3 +1,473 @@
 /* CDI minimal polish (safe defaults) */
 .book .book-summary { font-size: 14px; }
 .book .book-body .page-wrapper .page-inner { max-width: 920px; }
+
+/* -----------------------------
+   BOOK STRUCTURE / LAYOUT
+------------------------------ */
+.book-extra { display: none; }
+
+.sidebar li.book-part {
+  margin-top: 1rem;
+  color: #bbb;
+}
+
+#main-container {
+  width: 100%;
+  background-color: white;
+  color: black;
+  padding: 30px;
+  margin: 0 auto;
+}
+
+#footer {
+  background-color: #000;
+  color: white;
+  font-size: 90%;
+  padding: 20px;
+}
+
+#footer a {
+  color: rgb(82, 214, 247);
+}
+
+
+/* -----------------------------
+   HEADER STYLING
+------------------------------ */
+#header {
+  color: black;
+  text-align: center;
+  width: 100%;
+}
+
+#header h1 {
+  font-size: 2.2em;
+  font-family: "Roboto";
+  font-weight: 700;
+}
+
+#header .subtitle {
+  font-size: 1.4em;
+  color: black;
+  font-family: "Roboto";
+  font-weight: 400;
+}
+
+/* Force subtitle to NOT be italic (override theme + <em>) */
+#header .subtitle,
+#header .subtitle em,
+.book .book-header .subtitle,
+.book .book-header .subtitle em {
+  font-style: normal !important;
+}
+
+#header .date {
+  color: #6c6c6c;
+  font-size: 1.2em;
+}
+
+.author { display: none; }
+
+
+/* -----------------------------
+   TYPOGRAPHY & GLOBAL TEXT
+------------------------------ */
+body {
+  font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #1e1e1e;
+  background-color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #003b4a; /* CDI Primary */
+}
+
+.book .book-body .page-wrapper .page-inner section.normal h1 {
+  font-size: 2.4em;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal h2 {
+  font-size: 1.6em;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal h3 {
+  font-size: 1.4em;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal p {
+  font-size: 1.2em;
+  font-weight: 400;
+}
+
+/* === Global Paragraph Styling === */
+p {
+  font-size: 16px;
+  line-height: 1.4;
+  margin-top: 0;
+  margin-bottom: 1.8em;
+}
+
+
+/* -----------------------------
+   CODE BLOCKS & TABLES
+------------------------------ */
+code, pre {
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 90%;
+  line-height: 1.5;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  white-space: inherit;
+}
+
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+
+p code {
+  white-space: inherit;
+}
+
+table {
+  background-color: #eee;
+  color: black;
+}
+
+table td, table th {
+  padding: 0.5em 1em;
+  font-size: 12px;
+  text-transform: none;
+}
+
+
+/* -----------------------------
+   IMAGES
+------------------------------ */
+img {
+  margin: auto;
+  max-width: 75%;
+  height: auto;
+  vertical-align: middle;
+  border-style: none;
+}
+
+
+/* -----------------------------
+   LINKS & TEXT EMPHASIS
+------------------------------ */
+a {
+  color: #007ea8;
+}
+
+a:hover {
+  color: #00a9c0;
+  text-decoration: underline;
+}
+
+em { font-style: italic; }
+strong { font-weight: bold; }
+
+
+/* -----------------------------
+   GLOBAL BLOCKQUOTE STYLE (CDI Themed)
+------------------------------ */
+blockquote {
+  background-color: #f9f9f9;
+  border-left: 5px solid #00a9c0; /* CDI teal */
+  padding: 1em 1.2em;
+  margin: 1.5em 0;
+  font-style: italic;
+  border-radius: 4px;
+  color: #003b4a; /* Darker CDI text tone */
+  font-size: 90%;
+  line-height: 1.6;
+}
+
+hr {
+  height: 1px;
+  border: none;
+  background-color: #ddd;
+  margin: 2em 0;
+}
+
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+
+
+/* -----------------------------
+   FONT AWESOME ICON BLOCKS
+------------------------------ */
+.infoicon, .questionicon, .alerticon, .arrowicon {
+  padding: 1em;
+  margin-bottom: 10px;
+  background: #022400;
+  color: white;
+  position: relative;
+}
+
+.infoicon::before {
+  content: "\f05a";
+}
+.alerticon::before {
+  content: "\f06a";
+}
+.questionicon::before {
+  content: "\f128";
+}
+.arrowicon::before {
+  content: "\f178";
+}
+
+.infoicon::before,
+.questionicon::before,
+.alerticon::before,
+.arrowicon::before {
+  font-family: FontAwesome;
+  font-weight: 900;
+  margin-right: 5px;
+  font-size: 25px;
+}
+
+.infoicon h2{
+  color: white;
+}
+
+/* Add colon after Lesson number, minimal spacing */
+.header-section-number::after {
+  content: ":";
+  padding-right: 0;   /* remove extra padding */
+  margin-right: 0;    /* tighten spacing */
+}
+
+/* Optional: tighten spacing a touch */
+.header-section-number {
+  margin-right: 0.1em;
+}
+
+/* If you ever switch to bs4_book later, this will handle it too */
+.chapter-number::after {
+  content: ":\00a0";
+}
+
+
+/* === Premium CTA Block (CDI Brand, Fully Enhanced) === */
+
+.cdi-premium-cta {
+  max-width: 640px;
+  margin: 40px auto 8px;
+  padding: 0 12px;
+}
+
+.cdi-premium-card {
+  background: linear-gradient(135deg, #ffffff, #f1f5f9);
+  border-radius: 18px;
+  padding: 20px 22px 22px;                 /* B: slightly tighter padding */
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  text-align: center;
+  transition: all 0.3s ease;               /* A: smooth hover transition */
+}
+
+/* A: card hover glow + soft lift */
+.cdi-premium-card:hover {
+  box-shadow: 0 26px 48px rgba(0, 0, 0, 0.20);
+  transform: translateY(-2px);
+}
+
+/* badge at top */
+.cdi-premium-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(0, 59, 74, 0.06);       /* CDI teal tint */
+  color: #003b4a;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* label text */
+.cdi-premium-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  margin: 0 0 4px;
+}
+
+/* heading */
+.cdi-premium-heading {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #003b4a;
+  margin: 0 0 4px;                          /* C: slightly tighter */
+}
+
+/* descriptive text */
+.cdi-premium-text {
+  font-size: 0.96rem;
+  color: #4b5563;
+  margin: 0 0 12px;                         /* C: tighter spacing */
+}
+
+/* feature list */
+.cdi-premium-list {
+  list-style-type: disc;
+  text-align: left;
+  max-width: 420px;
+  margin: 0 auto 18px;
+  padding-left: 1.2rem;
+  font-size: 0.92rem;
+  color: #4b5563;
+}
+
+.cdi-premium-list li + li {
+  margin-top: 4px;
+}
+
+/* main CTA button */
+.cdi-premium-btn {
+  display: inline-block;
+  padding: 14px 36px;                       /* D: slightly larger pill */
+  border-radius: 999px;
+  background: linear-gradient(135deg, #003b4a, #0ea5e9);
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 1.05rem;                       /* D: bigger text */
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.25s ease;
+  min-width: 300px;                         /* D: minimum width for presence */
+  text-align: center;
+}
+
+/* E: subtle wiggle + stronger shadow on hover */
+.cdi-premium-btn:hover {
+  animation: cdi-premium-wiggle 0.15s ease-in-out;
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.40);
+}
+
+/* E: wiggle keyframes */
+@keyframes cdi-premium-wiggle {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+/* F + robustness: force gradient + white text no matter what GitBook does */
+.cdi-premium-card .cdi-premium-btn,
+.cdi-premium-card a.cdi-premium-btn,
+a.cdi-premium-btn {
+  background: linear-gradient(135deg, #003b4a, #0ea5e9) !important;
+  color: #ffffff !important;
+  display: inline-block !important;
+}
+
+/* optional: hide CTA when printing / PDF */
+@media print {
+  .cdi-premium-cta {
+    display: none;
+  }
+}
+
+#congrats-free, #welcome-premium {
+  background: #f5fbff;
+  border-left: 4px solid #003b4a;
+  padding: 1.75rem 2rem;
+  margin: 2rem 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  line-height: 1.55;
+}
+
+/* ============================================================
+   CDI — Navigation "Next Step" Box
+   ============================================================ */
+
+.next {
+  margin-top: 2rem;
+  padding: 1.2rem 1.5rem;
+  background: #f5faff;              /* soft, academic blue */
+  border-left: 4px solid #0085c7;    /* CDI signature accent */
+  border-radius: 6px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #0f2b3a;                    /* slightly darker text for clarity */
+}
+
+.next strong {
+  color: #005a8d;
+  font-weight: 600;
+}
+
+.next a {
+  color: #0074b8;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s ease, text-decoration 0.15s ease;
+}
+
+.next a:hover {
+  text-decoration: underline;
+}
+
+/* Optional alternate style: success/green version (if needed) */
+.next.success {
+  background: #f3fff6;
+  border-left: 4px solid #2ecc71;
+}
+
+
+/* ============================================================
+   CDI — Preface "Message from CDI" Box (Primary Callout)
+   ============================================================ */
+
+.cdi-message {
+  background: #f5f9fc;              /* softer than next-step */
+  border-left: 5px solid #1f8fb6;   /* stronger, premium accent */
+  padding: 1.6rem 1.8rem;
+  margin: 2.4rem 0;
+  border-radius: 10px;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.035);
+
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #12323e;
+}
+
+.cdi-message strong:first-of-type {
+  font-size: 1.17rem;
+  color: #0b3e50;
+}
+
+.cdi-message ul {
+  margin-top: 0.8rem;
+}
+
+.cdi-message a {
+  color: #0b6fa4;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease, text-decoration 0.15s ease;
+}
+
+.cdi-message a:hover {
+  text-decoration: underline;
+}
+
+/* Hide the full-book reference section */
+#refs {
+    /* display: none !important; */
+}

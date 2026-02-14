@@ -1,1 +1,141 @@
-#
+# Composition Visualization
+
+Composition plots are often the first figures shown in microbiome
+studies.
+
+Bar plots at the phylum or genus level are common. They appear
+intuitive. They are also easy to misinterpret.
+
+::: cdi-message
+Relative abundance plots do not show absolute change.
+
+They show proportions constrained to sum to one.
+:::
+
+This chapter focuses on:
+
+-   transforming counts to relative abundance
+-   aggregating taxa to a chosen rank
+-   visualizing composition across metadata groups
+-   understanding compositional limitations
+
+## Load Data
+
+``` {r}
+library(phyloseq)
+library(ggplot2)
+
+ps <- readRDS("data/moving-pictures-ps.rds")
+```
+
+## Transform to Relative Abundance
+
+Raw counts are not comparable across samples with different sequencing
+depths.
+
+``` {r}
+ps_rel <- transform_sample_counts(ps, function(x) x / sum(x))
+
+range(sample_sums(ps_rel))
+```
+
+::: cdi-message
+Each sample now sums to 1.
+
+This enables proportional comparison across samples. However, relative
+abundance introduces compositional constraints. An increase in one taxon
+must decrease another.
+:::
+
+## Aggregate to Genus Level
+
+``` {r}
+ps_genus <- tax_glom(ps_rel, taxrank = "Genus")
+
+ntaxa(ps_genus)
+```
+
+Remove taxa without genus assignment:
+
+``` {r}
+ps_genus <- subset_taxa(ps_genus, !is.na(Genus))
+ntaxa(ps_genus)
+```
+
+::: cdi-message
+Aggregation simplifies visualization, but it also hides within-genus
+variation.
+
+Resolution is always a trade-off.
+:::
+
+## Identify Top Genera
+
+To improve readability, select the globally most abundant genera.
+
+``` {r}
+genus_abundance <- taxa_sums(ps_genus)
+
+top_genera <- names(sort(genus_abundance, decreasing = TRUE))[1:10]
+
+ps_top <- prune_taxa(top_genera, ps_genus)
+
+ntaxa(ps_top)
+```
+
+## Prepare Data for Plotting
+
+``` {r}
+df_comp <- psmelt(ps_top)
+```
+
+## Composition by Body Site
+
+``` {r}
+ggplot(df_comp, aes(x = Sample, y = Abundance, fill = Genus)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ `body-site`, scales = "free_x") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) +
+  labs(y = "Relative Abundance")
+```
+
+::: cdi-message
+Certain genera dominate specific body sites.
+
+But dominance in a relative abundance plot does not imply absolute
+biological increase.
+:::
+
+## Group-Level View
+
+``` {r}
+ggplot(df_comp, aes(x = `body-site`, y = Abundance, fill = Genus)) +
+  geom_boxplot() +
+  labs(y = "Relative Abundance")
+```
+
+::: cdi-message
+Boxplots help reveal distribution spread and variability.
+
+Composition plots are descriptive, not inferential.
+:::
+
+## Limitations of Composition Plots
+
+Composition plots:
+
+-   are constrained by constant-sum scaling
+-   cannot reveal absolute abundance changes
+-   are sensitive to filtering and aggregation level
+
+::: cdi-message
+Composition plots answer: "What proportion of the community does each
+taxon occupy?"
+
+They do not answer: "Did the taxon increase in absolute abundance?"
+:::
+
+::: next
+Next → [Diversity Analysis](#diversity-analysis)
+:::

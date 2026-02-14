@@ -1,1 +1,123 @@
-#
+# Data structure and prevalence
+
+Microbiome count data is structurally sparse and uneven.
+
+This chapter focuses on:
+
+1.  Matrix sparsity\
+2.  Library size variation\
+3.  Taxa prevalence
+
+## Load data
+
+``` {r}
+library(phyloseq)
+ps <- readRDS("data/moving-pictures-ps.rds")
+```
+
+## Sparsity
+
+``` {r}
+otu <- as(otu_table(ps), "matrix")
+if (!taxa_are_rows(ps)) otu <- t(otu)
+
+zero_prop <- mean(otu == 0)
+zero_prop
+```
+
+::: cdi-message
+A high proportion of zeros is normal in microbiome data.
+
+Filtering decisions are not cosmetic. They determine which patterns
+become visible.
+:::
+
+## Library Size Variation
+
+``` {r}
+lib_size <- sample_sums(ps)
+summary(lib_size)
+```
+
+``` {r}
+library(ggplot2)
+
+df_lib <- data.frame(
+  sample_id = names(lib_size),
+  library_size = as.numeric(lib_size)
+)
+
+ggplot(df_lib, aes(x = library_size)) +
+  geom_histogram(bins = 20) +
+  labs(x = "Library size", y = "Number of samples")
+```
+
+::: cdi-message
+When sequencing depth varies, raw counts are not comparable.
+
+Normalization is required for fair comparison across samples.
+:::
+
+## Detection and Prevalence
+
+``` {r}
+detection <- 1
+
+taxa_prev <- rowSums(otu >= detection)
+taxa_prev_df <- data.frame(
+  taxon = rownames(otu),
+  prevalence_n = taxa_prev,
+  prevalence_frac = taxa_prev / ncol(otu)
+)
+
+summary(taxa_prev_df$prevalence_n)
+```
+
+``` {r}
+ggplot(taxa_prev_df, aes(x = prevalence_n)) +
+  geom_histogram(bins = 20) +
+  labs(x = "Number of samples detected", y = "Number of taxa")
+```
+
+::: cdi-message
+Most taxa are observed in only a small fraction of samples.
+
+Prevalence filtering improves clarity, but it also changes the feature
+space. Filtering rules must be stated explicitly.
+:::
+
+## Simple Prevalence Filter
+
+``` {r}
+min_prev_frac <- 0.10
+keep_taxa <- taxa_prev_df$taxon[taxa_prev_df$prevalence_frac >= min_prev_frac]
+
+ps_prev <- prune_taxa(keep_taxa, ps)
+
+c(original_taxa = ntaxa(ps), after_filter = ntaxa(ps_prev))
+```
+
+::: cdi-message
+Prevalence filtering reduces dimensionality and improves readability.
+
+It can also change ordination and diversity results. Interpretation must
+acknowledge these choices.
+:::
+
+## Relative Abundance Preview
+
+``` {r}
+ps_rel <- transform_sample_counts(ps, function(x) x / sum(x))
+range(sample_sums(ps_rel))
+```
+
+::: cdi-message
+After transformation, each sample sums to 1.
+
+This enables clearer visualization, but does not remove compositional
+constraints.
+:::
+
+:::next
+Next → [Composition Visualization](#composition-visualization)
+:::

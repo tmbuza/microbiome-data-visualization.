@@ -1,1 +1,116 @@
-# 
+# Preface {-#preface}
+
+:::cdi-message
+This guide focuses on interpretation.
+
+We do not only generate plots.
+We explain what they represent,
+what assumptions they carry,
+and what conclusions are justified.
+:::
+
+## Welcome {-}
+
+Microbiome studies frequently present:
+
+- composition bar plots  
+- alpha diversity summaries  
+- ordination maps  
+- heatmaps and clustering patterns  
+
+These figures are familiar.
+
+Interpreting them correctly is less common.
+
+A plot can look structured and convincing.
+That does not automatically make it biologically meaningful.
+
+This guide provides a structured pathway from raw feature tables
+to careful, defensible visual interpretation.
+
+---
+
+## What This Guide Does {-}
+
+This is a structured, applied guide to microbiome data visualization using R.
+
+We begin with a validated `phyloseq` object derived from publicly available QIIME2 outputs and build forward from there.
+
+The emphasis is not on generating every possible figure.
+It is on understanding:
+
+- what each visualization encodes  
+- how preprocessing decisions shape what you see  
+- how filtering alters apparent patterns  
+- how compositional constraints affect interpretation  
+
+Clarity in microbiome analysis begins with structural awareness.
+
+---
+
+## How This Guide Is Organized {-}
+
+The chapters follow a logical progression:
+
+- **Datasets**  
+  Understanding the internal structure of the phyloseq object  
+
+- **Data Structure and Prevalence**  
+  Sparsity, sequencing depth variation, and filtering logic  
+
+- **Composition Visualization**  
+  Relative abundance, aggregation choices, and compositional limits  
+
+- **Diversity Analysis**  
+  What alpha diversity measures — and what it does not  
+
+- **Ordination Plots**  
+  What visual separation implies — and what it does not  
+
+- **Heatmaps and Patterns**  
+  Recognizing structure without over-claiming  
+
+- **Summary and Next Steps**  
+  Extending analysis responsibly  
+
+Each chapter combines reproducible code with interpretive framing.
+
+---
+
+## Who This Guide Is For {-}
+
+This guide is written for:
+
+- Researchers working with 16S microbiome outputs from QIIME2, mothur, or similar pipelines  
+- Learners comfortable running R code who want stronger interpretive reasoning  
+- Analysts preparing figures for manuscripts, theses, or reports  
+
+No advanced statistics are required.
+
+What is required is careful thinking.
+
+---
+
+## Relationship to iMAP {-}
+
+The iMAP repositories provide modular steps for microbiome data processing and exploratory workflows.
+
+This guide does not replace those pipelines.
+
+It begins after feature tables and taxonomy have been generated.
+
+It strengthens the interpretive layer by connecting visualization choices to the questions they are intended to answer.
+
+Together, iMAP and this guide form a coherent path from sequencing output to biological insight.
+
+---
+
+:::cdi-message
+A figure is not a conclusion.
+
+Interpretation requires understanding structure before pattern.
+:::
+
+:::next
+Next → [Datasets](#datasets)
+:::

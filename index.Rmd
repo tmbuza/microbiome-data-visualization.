@@ -1,31 +1,54 @@
 ---
-title: "Microbiome Data Visualization"
-author: "Teresia Mrema Buza"
+title: |
+  Microbiome Data Visualization
+subtitle: |
+  A structured guide to composition, diversity, ordination, and interpretation
+
+knit: bookdown::render_book
 site: bookdown::bookdown_site
 documentclass: book
-description: "Free core guide for microbiome data visualization, aligned with iMAP."
+classoption: openany
+
+description: |
+  Microbiome Data Visualization is a practical, interpretation-focused guide built on a single
+  canonical dataset (QIIME2 Moving Pictures). It explains how microbiome plots are constructed,
+  what they represent, and how to interpret them carefully using reproducible R workflows.
+
+github-repo: "https://github.com/tmbuza/microbiome-data-visualization/"
+favicon: "favicon.ico"
+
+# Styling
+fontsize: 12pt
+spacing: double
+mainfont: Times New Roman
+colorlinks: yes
+fig_caption: yes
+indent: no
+geometry: margin=1in
+always_allow_html: yes
+
+# Bibliography (optional for now)
+# bibliography:
+#   - library/references.bib
+# csl:
+#   - library/apa.csl
+# link-citations: yes
+
+# Extra pandoc args
+pandoc_args: ["--variable=linestretch:2"]
+
+# Extra CSS
+css:
+  - style.css
 ---
 
-# Overview {-}
+# {-}
 
-This guide is the **free core** for microbiome data visualization. It is designed to help you generate common plots and read them correctly.
+<div style="text-align: center; margin-top: 1.5em;">
+  <img src="images/cover/microbiome-data-visualization-cover.png" width="75%" />
+</div>
 
-It builds on outputs from **iMAP PART 08 (Exploratory Analysis)** and connects visualization choices to the questions they answer.
+<div style="text-align: center; font-style: normal; margin-top: 1em;">
+Free Guide · Updated `r format(Sys.Date(), "%b %Y")`
+</div>
 
-## Who this is for {-}
-
-- Researchers working with 16S microbiome data outputs from QIIME2, mothur, or similar pipelines  
-- Learners who can run code but want a clearer interpretation path for plots  
-- Anyone preparing figures for manuscripts or reports  
-
-## What you will learn {-}
-
-- How to choose plots that match a biological or analytical question  
-- How to read composition and ordination plots without over-claiming  
-- How prevalence and filtering change what you see  
-- How to structure a reproducible visualization workflow in R  
-
-## Related projects {-}
-
-- iMAP project overview: https://github.com/tmbuza/imap-project-overview
-- iMAP PART 08 (Exploratory analysis): https://github.com/tmbuza/imap-data-exploration
