@@ -1,0 +1,54 @@
+<style>
+    /* =========================================================
+   CDI FOOTNOTE FOOTER — MORE VISIBLE
+   ========================================================= */
+
+/* Add spacing below page content */
+.book .book-body .page-wrapper .page-inner {
+  padding-bottom: 90px !important;
+}
+
+/* Footer container */
+.cdi-footer {
+  text-align: left;                   /* footnote alignment */
+  margin-top: 70px;                   /* more breathing room */
+  padding: 35px 0 15px;               /* increased padding */
+  font-size: 1.1rem;                  /* larger, more readable */
+  color: #000000;                     /* darker gray for visibility */
+  position: relative;
+  line-height: 1.4;
+  max-width: 900px;                   
+  margin-left: auto;
+  margin-right: auto;
+  transition: color 0.25s ease;
+}
+
+/* Footnote separator line */
+.cdi-footer::before {
+  content: "";
+  display: block;
+  width: 120px;                       /* longer = more noticeable */
+  height: 1.5px;
+  background-color: #aaaaaa;          /* slightly darker line */
+  margin-bottom: 12px;
+  border-radius: 2px;
+  transition: background-color 0.25s ease;
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .cdi-footer {
+    color: #000000;                   /* brighter text */
+  }
+
+  .cdi-footer::before {
+    background-color: #aaaaaa;        /* medium gray separator */
+  }
+}
+</style>
+<div class="cdi-footer">
+  <span>CDI – Complex Data Insights — 2026 Edition</span>
+</div>

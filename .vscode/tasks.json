@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "R: renv restore",
+      "type": "shell",
+      "command": "Rscript",
+      "args": ["-e", "renv::restore(prompt = FALSE)"],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Bookdown: render gitbook",
+      "type": "shell",
+      "command": "Rscript",
+      "args": ["-e", "bookdown::render_book('index.Rmd', output_format = 'bookdown::gitbook')"],
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}
