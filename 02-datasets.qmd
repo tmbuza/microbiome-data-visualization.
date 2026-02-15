@@ -99,6 +99,6 @@ A valid `phyloseq` object guarantees alignment across components.
 Many downstream errors originate from mismatched sample identifiers.
 :::
 
-:::next
+<!-- :::next
 Next → [Data Structure and Prevalence](03-data-structure-and-prevalence.qmd)
-:::
+::: -->

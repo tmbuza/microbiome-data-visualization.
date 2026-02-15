@@ -300,6 +300,6 @@ Interpretation should report both results.
 - Visual separation is descriptive. Statistical tests support interpretation.
 - Always check dispersion when using PERMANOVA.
 
-:::next
+<!-- :::next
 Next → [Heatmaps and Patterns](07-heatmaps-and-patterns.qmd)
-:::
+::: -->

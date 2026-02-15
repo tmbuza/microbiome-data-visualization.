@@ -179,6 +179,6 @@ After transformation, each sample sums to 1.
 This enables clearer visualization, but does not remove compositional constraints.
 :::
 
-:::next
+<!-- :::next
 Next → [Composition Visualization](04-composition-visualization.qmd)
-:::
+::: -->

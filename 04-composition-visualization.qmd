@@ -230,6 +230,6 @@ Composition plots answer: "What proportion of the community does each taxon occu
 They do not answer: "Did the taxon increase in absolute abundance?"
 :::
 
-:::next
+<!-- :::next
 Next → [Diversity Analysis](05-diversity-analysis.qmd)
-:::
+::: -->

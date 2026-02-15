@@ -110,7 +110,7 @@ A figure is not a conclusion.
 
 Interpretation requires understanding structure before pattern.
 :::
-
+<!-- 
 :::next
 Next → [Datasets](#datasets)
-:::
+::: -->

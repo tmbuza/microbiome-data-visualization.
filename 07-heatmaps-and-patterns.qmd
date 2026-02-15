@@ -238,6 +238,6 @@ In premium, you can add:
 
 ---
 
-:::next
+<!-- :::next
 Next → [Summary and Next Steps](08-summary-and-next-steps.qmd)
-:::
+::: -->

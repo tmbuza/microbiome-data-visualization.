@@ -64,7 +64,7 @@
     "href": "01-preface.html#relationship-to-imap",
     "title": "Preface",
     "section": "Relationship to iMAP",
-    "text": "Relationship to iMAP\nThe iMAP repositories provide modular steps for microbiome data processing and exploratory workflows.\nThis guide does not replace those pipelines.\nIt begins after feature tables and taxonomy have been generated.\nIt strengthens the interpretive layer by connecting visualization choices to the questions they are intended to answer.\nTogether, iMAP and this guide form a coherent path from sequencing output to biological insight.\n\n\nA figure is not a conclusion.\nInterpretation requires understanding structure before pattern.\n\n\nNext → Datasets",
+    "text": "Relationship to iMAP\nThe iMAP repositories provide modular steps for microbiome data processing and exploratory workflows.\nThis guide does not replace those pipelines.\nIt begins after feature tables and taxonomy have been generated.\nIt strengthens the interpretive layer by connecting visualization choices to the questions they are intended to answer.\nTogether, iMAP and this guide form a coherent path from sequencing output to biological insight.\n\n\nA figure is not a conclusion.\nInterpretation requires understanding structure before pattern.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Preface</span>"
     ]
@@ -124,7 +124,7 @@
     "href": "02-datasets.html#structural-integrity",
     "title": "Datasets",
     "section": "Structural integrity",
-    "text": "Structural integrity\n\nall(phyloseq::sample_names(ps) == \n    rownames(phyloseq::sample_data(ps)))\n\n[1] TRUE\n\n\n\nA valid phyloseq object guarantees alignment across components.\nMany downstream errors originate from mismatched sample identifiers.\n\n\nNext → Data Structure and Prevalence",
+    "text": "Structural integrity\n\nall(phyloseq::sample_names(ps) == \n    rownames(phyloseq::sample_data(ps)))\n\n[1] TRUE\n\n\n\nA valid phyloseq object guarantees alignment across components.\nMany downstream errors originate from mismatched sample identifiers.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Datasets</span>"
     ]
@@ -194,7 +194,7 @@
     "href": "03-data-structure-and-prevalence.html#relative-abundance-preview",
     "title": "Data Structure and Prevalence",
     "section": "Relative abundance preview",
-    "text": "Relative abundance preview\n\nps_rel &lt;- phyloseq::transform_sample_counts(ps, function(x) x / sum(x))\nrange(phyloseq::sample_sums(ps_rel))\n\n[1] 1 1\n\n\n\nAfter transformation, each sample sums to 1.\nThis enables clearer visualization, but does not remove compositional constraints.\n\n\nNext → Composition Visualization",
+    "text": "Relative abundance preview\n\nps_rel &lt;- phyloseq::transform_sample_counts(ps, function(x) x / sum(x))\nrange(phyloseq::sample_sums(ps_rel))\n\n[1] 1 1\n\n\n\nAfter transformation, each sample sums to 1.\nThis enables clearer visualization, but does not remove compositional constraints.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Structure and Prevalence</span>"
     ]
@@ -284,7 +284,7 @@
     "href": "04-composition-visualization.html#limitations-of-composition-plots",
     "title": "Composition Visualization",
     "section": "Limitations of composition plots",
-    "text": "Limitations of composition plots\nComposition plots:\n\nare constrained by constant-sum scaling\ncannot reveal absolute abundance changes\nare sensitive to filtering and aggregation level\n\n\nComposition plots answer: “What proportion of the community does each taxon occupy?”\nThey do not answer: “Did the taxon increase in absolute abundance?”\n\n\nNext → Diversity Analysis",
+    "text": "Limitations of composition plots\nComposition plots:\n\nare constrained by constant-sum scaling\ncannot reveal absolute abundance changes\nare sensitive to filtering and aggregation level\n\n\nComposition plots answer: “What proportion of the community does each taxon occupy?”\nThey do not answer: “Did the taxon increase in absolute abundance?”",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Composition Visualization</span>"
     ]
@@ -354,7 +354,7 @@
     "href": "05-diversity-analysis.html#interpretation",
     "title": "Diversity Analysis",
     "section": "Interpretation",
-    "text": "Interpretation\n\nObserved richness is highly depth-sensitive.\nShannon and Simpson reduce some sensitivity but do not eliminate it.\nIf richness increases strongly with depth, group comparisons may reflect sequencing effort rather than ecology.\n\n\nWhat these plots show\n\nDistribution of diversity within groups\n\nVariability across samples\n\nDominance vs evenness patterns\n\n\n\nWhat they do not show\n\nAbsolute abundance\n\nStatistical significance\n\nCausation\n\nConfounder adjustment\n\nAlpha diversity is descriptive unless formally tested.\n\n\nNext → Ordination Plots",
+    "text": "Interpretation\n\nObserved richness is highly depth-sensitive.\nShannon and Simpson reduce some sensitivity but do not eliminate it.\nIf richness increases strongly with depth, group comparisons may reflect sequencing effort rather than ecology.\n\n\nWhat these plots show\n\nDistribution of diversity within groups\n\nVariability across samples\n\nDominance vs evenness patterns\n\n\n\nWhat they do not show\n\nAbsolute abundance\n\nStatistical significance\n\nCausation\n\nConfounder adjustment\n\nAlpha diversity is descriptive unless formally tested.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Diversity Analysis</span>"
     ]
@@ -444,7 +444,7 @@
     "href": "06-ordination-plots.html#takeaway",
     "title": "Ordination Plots",
     "section": "Takeaway",
-    "text": "Takeaway\n\nOrdination summarizes dissimilarity, not biology.\nThe distance metric and preprocessing choices define the geometry.\nVisual separation is descriptive. Statistical tests support interpretation.\nAlways check dispersion when using PERMANOVA.\n\n\nNext → Heatmaps and Patterns",
+    "text": "Takeaway\n\nOrdination summarizes dissimilarity, not biology.\nThe distance metric and preprocessing choices define the geometry.\nVisual separation is descriptive. Statistical tests support interpretation.\nAlways check dispersion when using PERMANOVA.",
     "crumbs": [
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Ordination Plots</span>"
     ]
@@ -524,7 +524,7 @@
     "href": "07-heatmaps-and-patterns.html#premium-extension-idea-kept-for-later",
     "title": "Heatmaps and Patterns",
     "section": "Premium extension idea (kept for later)",
-    "text": "Premium extension idea (kept for later)\nIn premium, you can add:\n\nCLR transformation and compositional heatmaps\nper-group mean heatmaps (reduces sample noise)\ndifferential abundance overlays (results + visualization)\nstability checks: does clustering persist under alternative transformations?\n\n\n\nNext → Summary and Next Steps",
+    "text": "Premium extension idea (kept for later)\nIn premium, you can add:\n\nCLR transformation and compositional heatmaps\nper-group mean heatmaps (reduces sample noise)\ndifferential abundance overlays (results + visualization)\nstability checks: does clustering persist under alternative transformations?",
     "crumbs": [
       "<span class='chapter-number'>8</span>  <span class='chapter-title'>Heatmaps and Patterns</span>"
     ]
@@ -574,7 +574,7 @@
     "href": "08-summary-and-next-steps.html#where-to-go-next",
     "title": "Summary and Next Steps",
     "section": "Where to go next",
-    "text": "Where to go next\nIf you are continuing this dataset:\n\nTry different taxonomic ranks (Family, Genus, ASV) and compare stability.\nTry alternative distances (Jaccard for presence/absence; Aitchison for compositional analysis).\nConnect patterns to biology by identifying taxa that drive separation.\n\nIf you are starting a new dataset:\n\nRe-run the checklist.\nRebuild the canonical object for the new data.\nKeep decisions explicit and version controlled.\n\n\n\nThe fastest way to improve interpretation is not adding more plots.\nIt is improving the logic that connects each plot to a question you can defend.\n\n\nNext → return to the start: Preface",
+    "text": "Where to go next\nIf you are continuing this dataset:\n\nTry different taxonomic ranks (Family, Genus, ASV) and compare stability.\nTry alternative distances (Jaccard for presence/absence; Aitchison for compositional analysis).\nConnect patterns to biology by identifying taxa that drive separation.\n\nIf you are starting a new dataset:\n\nRe-run the checklist.\nRebuild the canonical object for the new data.\nKeep decisions explicit and version controlled.\n\n\n\nThe fastest way to improve interpretation is not adding more plots.\nIt is improving the logic that connects each plot to a question you can defend.",
     "crumbs": [
       "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
     ]

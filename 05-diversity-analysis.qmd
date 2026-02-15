@@ -243,6 +243,6 @@ Alpha diversity is descriptive unless formally tested.
 
 ---
 
-:::next
+<!-- :::next
 Next → [Ordination Plots](06-ordination-plots.qmd)
-:::
+::: -->
