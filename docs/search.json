@@ -573,8 +573,28 @@
     "objectID": "08-summary-and-next-steps.html#where-to-go-next",
     "href": "08-summary-and-next-steps.html#where-to-go-next",
     "title": "Summary and Next Steps",
-    "section": "Where to go next",
-    "text": "Where to go next\nIf you are continuing this dataset:\n\nTry different taxonomic ranks (Family, Genus, ASV) and compare stability.\nTry alternative distances (Jaccard for presence/absence; Aitchison for compositional analysis).\nConnect patterns to biology by identifying taxa that drive separation.\n\nIf you are starting a new dataset:\n\nRe-run the checklist.\nRebuild the canonical object for the new data.\nKeep decisions explicit and version controlled.\n\n\n\nThe fastest way to improve interpretation is not adding more plots.\nIt is improving the logic that connects each plot to a question you can defend.",
+    "section": "Where to Go Next",
+    "text": "Where to Go Next\nIf you are continuing with this dataset:\n\nCompare taxonomic resolution (Family, Genus, ASV) and assess stability.\nExplore alternative distances (Jaccard for presence/absence; Aitchison for compositional structure).\nIdentify taxa that most strongly contribute to observed separation.\n\nIf you are starting a new dataset:\n\nRe-run the structural checklist.\nRebuild a canonical object.\nKeep transformation and filtering decisions explicit and version controlled.\n\n\n\nThe fastest way to improve interpretation is not adding more plots.\nIt is strengthening the logic that connects each plot to a defensible biological question.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
+    ]
+  },
+  {
+    "objectID": "08-summary-and-next-steps.html#beyond-descriptive-visualization",
+    "href": "08-summary-and-next-steps.html#beyond-descriptive-visualization",
+    "title": "Summary and Next Steps",
+    "section": "Beyond Descriptive Visualization",
+    "text": "Beyond Descriptive Visualization\nThis guide focused on structural clarity and visualization:\n\ncomposition\n\ndiversity\n\nordination\n\nclustering patterns\n\nThese approaches describe what the data look like.\nThey do not yet address:\n\nWhether differences are statistically robust\n\nHow much variance is explained by specific variables\n\nHow covariates influence interpretation\n\nHow to reconcile conflicting signals across metrics\n\nThese questions require inferential modeling and more advanced analytical design.\nThe extended continuation of this guide explores:\n\nPERMANOVA and multivariate hypothesis testing\n\nconstrained ordination\n\nvariance partitioning\n\nmodel-based approaches\n\nstructured interpretation workflows\n\nThe objective is not to add more figures.\nIt is to reason more rigorously about biological signal.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
+    ]
+  },
+  {
+    "objectID": "08-summary-and-next-steps.html#continue-the-learning-path",
+    "href": "08-summary-and-next-steps.html#continue-the-learning-path",
+    "title": "Summary and Next Steps",
+    "section": "Continue the Learning Path",
+    "text": "Continue the Learning Path\nThe premium continuation of this guide expands these topics in depth:\n→ https://complexdatainsights.com/microbiome-premium\nIt builds from the same dataset and structure, but moves from descriptive visualization toward formal inference and analytical decision-making.",
     "crumbs": [
       "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
     ]
