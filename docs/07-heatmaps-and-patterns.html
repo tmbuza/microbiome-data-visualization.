@@ -160,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-data-structure-and-prevalence.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Structure and Prevalence</span></a>
+  <a href="./03-data-structure-and-prevalence.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data structure and prevalence</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -199,17 +199,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#load-data" id="toc-load-data" class="nav-link active" data-scroll-target="#load-data">Load data</a></li>
+  <li><a href="#a-cdi-plotting-theme-for-this-chapter" id="toc-a-cdi-plotting-theme-for-this-chapter" class="nav-link" data-scroll-target="#a-cdi-plotting-theme-for-this-chapter">A CDI plotting theme for this chapter</a></li>
   <li><a href="#decide-what-to-heatmap" id="toc-decide-what-to-heatmap" class="nav-link" data-scroll-target="#decide-what-to-heatmap">Decide what to heatmap</a></li>
-  <li><a href="#transform-to-relative-abundance-and-aggregate-to-genus" id="toc-transform-to-relative-abundance-and-aggregate-to-genus" class="nav-link" data-scroll-target="#transform-to-relative-abundance-and-aggregate-to-genus">Transform to relative abundance and aggregate to genus</a></li>
+  <li><a href="#transform-and-aggregate-to-genus" id="toc-transform-and-aggregate-to-genus" class="nav-link" data-scroll-target="#transform-and-aggregate-to-genus">Transform and aggregate to genus</a></li>
   <li><a href="#select-top-genera" id="toc-select-top-genera" class="nav-link" data-scroll-target="#select-top-genera">Select top genera</a></li>
-  <li><a href="#build-the-heatmap-matrix-r-python" id="toc-build-the-heatmap-matrix-r-python" class="nav-link" data-scroll-target="#build-the-heatmap-matrix-r-python">Build the heatmap matrix (R → Python)</a></li>
-  <li><a href="#heatmap-python-seaborn" id="toc-heatmap-python-seaborn" class="nav-link" data-scroll-target="#heatmap-python-seaborn">Heatmap (Python, seaborn)</a></li>
-  <li><a href="#reading-heatmaps-responsibly" id="toc-reading-heatmaps-responsibly" class="nav-link" data-scroll-target="#reading-heatmaps-responsibly">Reading heatmaps responsibly</a>
-  <ul class="collapse">
-  <li><a href="#what-patterns-can-suggest" id="toc-what-patterns-can-suggest" class="nav-link" data-scroll-target="#what-patterns-can-suggest">What patterns can suggest</a></li>
-  <li><a href="#common-misinterpretations" id="toc-common-misinterpretations" class="nav-link" data-scroll-target="#common-misinterpretations">Common misinterpretations</a></li>
-  </ul></li>
-  <li><a href="#premium-extension-idea-kept-for-later" id="toc-premium-extension-idea-kept-for-later" class="nav-link" data-scroll-target="#premium-extension-idea-kept-for-later">Premium extension idea (kept for later)</a></li>
+  <li><a href="#build-a-compact-matrix-for-visualization" id="toc-build-a-compact-matrix-for-visualization" class="nav-link" data-scroll-target="#build-a-compact-matrix-for-visualization">Build a compact matrix for visualization</a></li>
+  <li><a href="#heatmap-of-mean-genus-composition-by-body-site" id="toc-heatmap-of-mean-genus-composition-by-body-site" class="nav-link" data-scroll-target="#heatmap-of-mean-genus-composition-by-body-site">Heatmap of mean genus composition by body site</a></li>
+  <li><a href="#avoid-common-heatmap-traps" id="toc-avoid-common-heatmap-traps" class="nav-link" data-scroll-target="#avoid-common-heatmap-traps">Avoid common heatmap traps</a></li>
   </ul>
 </nav>
     </div>
@@ -252,9 +248,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="load-data" class="level2">
 <h2 class="anchored" data-anchor-id="load-data">Load data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(phyloseq)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/moving-pictures-ps.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">readRDS</span>(<span class="st">"data/moving-pictures-ps.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="a-cdi-plotting-theme-for-this-chapter" class="level2">
+<h2 class="anchored" data-anchor-id="a-cdi-plotting-theme-for-this-chapter">A CDI plotting theme for this chapter</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>cdi_teal   <span class="ot">&lt;-</span> <span class="st">"#036281"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cdi_yellow <span class="ot">&lt;-</span> <span class="st">"#f7c546"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>cdi_muted  <span class="ot">&lt;-</span> <span class="st">"#475569"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>cdi_plot_theme <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">base_size =</span> <span class="dv">13</span>) {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme_bw</span>(<span class="at">base_size =</span> base_size) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">theme</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.title =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.subtitle =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">color =</span> cdi_muted, <span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.grid.minor =</span> ggplot2<span class="sc">::</span><span class="fu">element_blank</span>()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
 </section>
@@ -262,22 +274,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="decide-what-to-heatmap">Decide what to heatmap</h2>
 <p>Heatmaps work best when the matrix:</p>
 <ul>
-<li>has been transformed (raw counts are dominated by depth)</li>
+<li>has been transformed (raw counts are dominated by sequencing depth)</li>
 <li>has a limited number of taxa (readable signal)</li>
 <li>is aligned to metadata (so patterns can be interpreted)</li>
 </ul>
-<p>We will create a genus-level heatmap using the top taxa by mean relative abundance.</p>
+<p>In this guide we will:</p>
+<ol type="1">
+<li>Convert counts to <strong>relative abundance</strong></li>
+<li>Aggregate to the <strong>Genus</strong> level</li>
+<li>Select the top genera by <strong>mean relative abundance</strong></li>
+<li>Visualize patterns across <strong>body site</strong> as a compact heatmap</li>
+</ol>
 <hr>
 </section>
-<section id="transform-to-relative-abundance-and-aggregate-to-genus" class="level2">
-<h2 class="anchored" data-anchor-id="transform-to-relative-abundance-and-aggregate-to-genus">Transform to relative abundance and aggregate to genus</h2>
+<section id="transform-and-aggregate-to-genus" class="level2">
+<h2 class="anchored" data-anchor-id="transform-and-aggregate-to-genus">Transform and aggregate to genus</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ps_rel <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">transform_sample_counts</span>(ps, <span class="cf">function</span>(x) x <span class="sc">/</span> <span class="fu">sum</span>(x))</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ps_genus <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">tax_glom</span>(ps_rel, <span class="at">taxrank =</span> <span class="st">"Genus"</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>ps_genus <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">subset_taxa</span>(ps_genus, <span class="sc">!</span><span class="fu">is.na</span>(Genus))</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>phyloseq<span class="sc">::</span><span class="fu">ntaxa</span>(ps_genus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ps_rel <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">transform_sample_counts</span>(ps, <span class="cf">function</span>(x) x <span class="sc">/</span> <span class="fu">sum</span>(x))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ps_genus <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">tax_glom</span>(ps_rel, <span class="at">taxrank =</span> <span class="st">"Genus"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ps_genus <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">subset_taxa</span>(ps_genus, <span class="sc">!</span><span class="fu">is.na</span>(Genus))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>phyloseq<span class="sc">::</span><span class="fu">ntaxa</span>(ps_genus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 197</code></pre>
 </div>
@@ -291,190 +309,118 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="select-top-genera" class="level2">
 <h2 class="anchored" data-anchor-id="select-top-genera">Select top genera</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>genus_mean <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">taxa_sums</span>(ps_genus) <span class="sc">/</span> phyloseq<span class="sc">::</span><span class="fu">nsamples</span>(ps_genus)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>top_n <span class="ot">&lt;-</span> <span class="dv">30</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>top_genera <span class="ot">&lt;-</span> <span class="fu">names</span>(<span class="fu">sort</span>(genus_mean, <span class="at">decreasing =</span> <span class="cn">TRUE</span>))[<span class="dv">1</span><span class="sc">:</span>top_n]</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>ps_top <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">prune_taxa</span>(top_genera, ps_genus)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>phyloseq<span class="sc">::</span><span class="fu">ntaxa</span>(ps_top)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>top_n <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>genus_mean <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">taxa_sums</span>(ps_genus) <span class="sc">/</span> phyloseq<span class="sc">::</span><span class="fu">nsamples</span>(ps_genus)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>top_genera <span class="ot">&lt;-</span> <span class="fu">names</span>(<span class="fu">sort</span>(genus_mean, <span class="at">decreasing =</span> <span class="cn">TRUE</span>))[<span class="fu">seq_len</span>(top_n)]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ps_top <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">prune_taxa</span>(top_genera, ps_genus)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>phyloseq<span class="sc">::</span><span class="fu">ntaxa</span>(ps_top)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 30</code></pre>
 </div>
 </div>
 <hr>
 </section>
-<section id="build-the-heatmap-matrix-r-python" class="level2">
-<h2 class="anchored" data-anchor-id="build-the-heatmap-matrix-r-python">Build the heatmap matrix (R → Python)</h2>
-<p>We will export a clean matrix for Python plotting:</p>
-<ul>
-<li>rows: taxa (Genus)</li>
-<li>columns: samples</li>
-<li>values: centered log ratio style is premium-level; for free we use log1p relative abundance</li>
-</ul>
-<p>We also export metadata to annotate columns.</p>
+<section id="build-a-compact-matrix-for-visualization" class="level2">
+<h2 class="anchored" data-anchor-id="build-a-compact-matrix-for-visualization">Build a compact matrix for visualization</h2>
+<p>We will compute mean relative abundance per body site and genus. This reduces clutter while keeping patterns interpretable.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract matrix</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span> methods<span class="sc">::</span><span class="fu">as</span>(phyloseq<span class="sc">::</span><span class="fu">otu_table</span>(ps_top), <span class="st">"matrix"</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>phyloseq<span class="sc">::</span><span class="fu">taxa_are_rows</span>(ps_top)) {</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  mat <span class="ot">&lt;-</span> <span class="fu">t</span>(mat)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Log transform for heatmap stability (free-track choice)</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>mat_log <span class="ot">&lt;-</span> <span class="fu">log1p</span>(mat)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Taxon labels</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>tax <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(phyloseq<span class="sc">::</span><span class="fu">tax_table</span>(ps_top))</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>tax<span class="sc">$</span>taxon_id <span class="ot">&lt;-</span> <span class="fu">rownames</span>(tax)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Prefer Genus as label, fallback to taxon id if needed</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>label <span class="ot">&lt;-</span> tax<span class="sc">$</span>Genus</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>label[<span class="fu">is.na</span>(label) <span class="sc">|</span> label <span class="sc">==</span> <span class="st">""</span>] <span class="ot">&lt;-</span> tax<span class="sc">$</span>taxon_id[<span class="fu">is.na</span>(label) <span class="sc">|</span> label <span class="sc">==</span> <span class="st">""</span>]</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply labels</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(mat_log) <span class="ot">&lt;-</span> <span class="fu">make.unique</span>(<span class="fu">as.character</span>(label))</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Export matrix</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"outputs/tables"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>mat_log_df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(mat_log, <span class="at">rownames =</span> <span class="st">"taxon"</span>)</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(mat_log_df, <span class="st">"outputs/tables/heatmap-matrix.csv"</span>)</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Export metadata (for column annotation)</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq<span class="sc">::</span><span class="fu">sample_data</span>(ps_top))</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>sample_id <span class="ot">&lt;-</span> <span class="fu">rownames</span>(meta)</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Robust body site detection</span></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">names</span>(meta)</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>body_col <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"body-site"</span>, <span class="st">"body.site"</span>, <span class="st">"body_site"</span>), cols)</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(body_col) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"Body site column not found in metadata. Available columns: "</span>, <span class="fu">paste</span>(cols, <span class="at">collapse =</span> <span class="st">", "</span>))</span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>body_site <span class="ot">&lt;-</span> meta[[body_col[<span class="dv">1</span>]]]</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>meta_out <span class="ot">&lt;-</span> meta[, <span class="fu">c</span>(<span class="st">"sample_id"</span>, <span class="st">"body_site"</span>)]</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(meta_out, <span class="st">"outputs/tables/heatmap-metadata.csv"</span>)</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick sanity check</span></span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(mat_log)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 30 34</code></pre>
-</div>
-</div>
-<div class="cdi-message">
-<p>The transformation you choose defines what “pattern” means.</p>
-<p>Log1p reduces dominance effects, making mid-abundance taxa visible. Premium extensions can explore CLR and compositional heatmaps.</p>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df_comp <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">psmelt</span>(ps_top)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize body site column name (handles `body-site`, `body.site`, `body_site`)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">names</span>(df_comp)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>body_col <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"body-site"</span>, <span class="st">"body.site"</span>, <span class="st">"body_site"</span>), cols)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(body_col) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"Body site column not found. Available columns: "</span>, <span class="fu">paste</span>(cols, <span class="at">collapse =</span> <span class="st">", "</span>))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>df_comp<span class="sc">$</span>body_site <span class="ot">&lt;-</span> df_comp[[body_col[<span class="dv">1</span>]]]</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>df_mean <span class="ot">&lt;-</span> df_comp <span class="sc">|&gt;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(body_site)) <span class="sc">|&gt;</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(body_site, Genus) <span class="sc">|&gt;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">mean_abundance =</span> <span class="fu">mean</span>(Abundance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Order genera by global mean abundance for more stable reading</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>genus_order <span class="ot">&lt;-</span> df_mean <span class="sc">|&gt;</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(Genus) <span class="sc">|&gt;</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">global_mean =</span> <span class="fu">mean</span>(mean_abundance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">arrange</span>(dplyr<span class="sc">::</span><span class="fu">desc</span>(global_mean)) <span class="sc">|&gt;</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(Genus)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>df_mean<span class="sc">$</span>Genus <span class="ot">&lt;-</span> <span class="fu">factor</span>(df_mean<span class="sc">$</span>Genus, <span class="at">levels =</span> genus_order)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Order body sites by total mean abundance</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>body_order <span class="ot">&lt;-</span> df_mean <span class="sc">|&gt;</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(body_site) <span class="sc">|&gt;</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">total =</span> <span class="fu">sum</span>(mean_abundance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">arrange</span>(dplyr<span class="sc">::</span><span class="fu">desc</span>(total)) <span class="sc">|&gt;</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(body_site)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>df_mean<span class="sc">$</span>body_site <span class="ot">&lt;-</span> <span class="fu">factor</span>(df_mean<span class="sc">$</span>body_site, <span class="at">levels =</span> body_order)</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Export for reproducibility</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>base<span class="sc">::</span><span class="fu">dir.create</span>(<span class="st">"outputs/tables"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(df_mean, <span class="st">"outputs/tables/heatmap-mean-body-site-genus.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
 </section>
-<section id="heatmap-python-seaborn" class="level2">
-<h2 class="anchored" data-anchor-id="heatmap-python-seaborn">Heatmap (Python, seaborn)</h2>
-<p>This is a modern heatmap with hierarchical clustering.</p>
-<ul>
-<li>Rows cluster by taxa similarity</li>
-<li>Columns cluster by sample similarity</li>
-<li>Body site is used as a column annotation</li>
-</ul>
+<section id="heatmap-of-mean-genus-composition-by-body-site" class="level2">
+<h2 class="anchored" data-anchor-id="heatmap-of-mean-genus-composition-by-body-site">Heatmap of mean genus composition by body site</h2>
+<p>We use a <strong>viridis</strong> scale (option <code>"magma"</code>) because it provides strong contrast and is broadly readable.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>mat <span class="op">=</span> pd.read_csv(<span class="st">"outputs/tables/heatmap-matrix.csv"</span>, index_col<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>meta <span class="op">=</span> pd.read_csv(<span class="st">"outputs/tables/heatmap-metadata.csv"</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Align metadata order to matrix columns</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>meta <span class="op">=</span> meta.set_index(<span class="st">"sample_id"</span>).reindex(mat.columns)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Palette customization for annotations</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>palette_name <span class="op">=</span> <span class="st">"Set1"</span>   <span class="co"># Try: "Set1", "tab10", "colorblind"</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>sites <span class="op">=</span> meta[<span class="st">"body_site"</span>].astype(<span class="bu">str</span>).unique().tolist()</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>site_colors <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(sites, sns.color_palette(palette_name, n_colors<span class="op">=</span><span class="bu">len</span>(sites))))</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>col_colors <span class="op">=</span> meta[<span class="st">"body_site"</span>].astype(<span class="bu">str</span>).<span class="bu">map</span>(site_colors)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"white"</span>)</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> sns.clustermap(</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    mat,</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">"average"</span>,</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    metric<span class="op">=</span><span class="st">"euclidean"</span>,</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    col_colors<span class="op">=</span>col_colors,</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">=</span><span class="st">"viridis"</span>,</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">9</span>),</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    xticklabels<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    yticklabels<span class="op">=</span><span class="va">True</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Legend for body site annotation</span></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> site, c <span class="kw">in</span> site_colors.items():</span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    g.ax_col_dendrogram.bar(<span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span>c, label<span class="op">=</span>site, linewidth<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>g.ax_col_dendrogram.legend(</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Body site"</span>,</span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    loc<span class="op">=</span><span class="st">"center"</span>,</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    ncol<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    bbox_to_anchor<span class="op">=</span>(<span class="fl">1.12</span>, <span class="fl">0.5</span>),</span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    frameon<span class="op">=</span><span class="va">False</span></span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(df_mean, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> Genus, <span class="at">y =</span> body_site, <span class="at">fill =</span> mean_abundance)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">"magma"</span>, <span class="at">name =</span> <span class="st">"Mean rel. abundance"</span>) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Mean genus composition heatmap"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Aggregated by body site (relative abundance)"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">color =</span> cdi_muted, <span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> ggplot2<span class="sc">::</span><span class="fu">element_blank</span>(),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">9</span>),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid =</span> ggplot2<span class="sc">::</span><span class="fu">element_blank</span>(),</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"right"</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="07-heatmaps-and-patterns_files/figure-html/plot-heatmap-clustermap-1.png" class="img-fluid figure-img" width="960"></p>
+<p><img src="07-heatmaps-and-patterns_files/figure-html/plot-heatmap-mean-1.png" class="img-fluid figure-img" width="1056"></p>
 </figure>
 </div>
 </div>
 </div>
 <div class="cdi-message">
-<p>Clustering is a pattern-finding tool.</p>
-<p>Clusters should be treated as hypotheses until validated with targeted analysis.</p>
+<p>How to read this heatmap:</p>
+<ul>
+<li>Compare patterns across <strong>rows</strong> (body sites)</li>
+<li>Compare which genera dominate within a body site</li>
+<li>Look for genera that appear consistently across sites versus those that are site-specific</li>
+</ul>
+<p>Remember: these are <strong>relative abundances</strong> averaged across samples.</p>
 </div>
 <hr>
 </section>
-<section id="reading-heatmaps-responsibly" class="level2">
-<h2 class="anchored" data-anchor-id="reading-heatmaps-responsibly">Reading heatmaps responsibly</h2>
-<section id="what-patterns-can-suggest" class="level3">
-<h3 class="anchored" data-anchor-id="what-patterns-can-suggest">What patterns can suggest</h3>
+<section id="avoid-common-heatmap-traps" class="level2">
+<h2 class="anchored" data-anchor-id="avoid-common-heatmap-traps">Avoid common heatmap traps</h2>
+<p>Heatmaps can be misleading when:</p>
 <ul>
-<li>Taxa that co-occur across samples</li>
-<li>Group structure (samples that cluster together)</li>
-<li>Dominance patterns (taxa that stand out repeatedly)</li>
-</ul>
-</section>
-<section id="common-misinterpretations" class="level3">
-<h3 class="anchored" data-anchor-id="common-misinterpretations">Common misinterpretations</h3>
-<ul>
-<li>Clustering does not imply causation</li>
-<li>Bright color does not automatically imply biological importance</li>
-<li>Heatmaps are highly sensitive to:
-<ul>
-<li>transformation</li>
-<li>filtering and top-N selection</li>
-<li>distance metric and linkage method</li>
-</ul></li>
+<li>taxa are too numerous (pattern becomes noise)</li>
+<li>transformation choices are not stated</li>
+<li>clustering is overinterpreted as causation</li>
+<li>groups are averaged without acknowledging within-group variation</li>
 </ul>
 <div class="cdi-message">
-<p>Heatmaps are not “results” by themselves.</p>
-<p>They are a compact way to inspect structure and generate questions for follow-up.</p>
+<p>A heatmap is a summary view.</p>
+<p>Treat it as a pattern-finding tool, then follow up with targeted plots and formal testing.</p>
 </div>
-<hr>
-</section>
-</section>
-<section id="premium-extension-idea-kept-for-later" class="level2">
-<h2 class="anchored" data-anchor-id="premium-extension-idea-kept-for-later">Premium extension idea (kept for later)</h2>
-<p>In premium, you can add:</p>
-<ul>
-<li>CLR transformation and compositional heatmaps</li>
-<li>per-group mean heatmaps (reduces sample noise)</li>
-<li>differential abundance overlays (results + visualization)</li>
-<li>stability checks: does clustering persist under alternative transformations?</li>
-</ul>
-<hr>
-<!-- :::next
-Next → [Summary and Next Steps](08-summary-and-next-steps.qmd)
-::: -->
 
 
 </section>

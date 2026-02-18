@@ -160,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-data-structure-and-prevalence.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Structure and Prevalence</span></a>
+  <a href="./03-data-structure-and-prevalence.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data structure and prevalence</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -198,19 +198,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#diversity-analysis" id="toc-diversity-analysis" class="nav-link active" data-scroll-target="#diversity-analysis">Diversity Analysis</a>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link active" data-scroll-target="#load-data">Load data</a></li>
+  <li><a href="#check-sequencing-depth" id="toc-check-sequencing-depth" class="nav-link" data-scroll-target="#check-sequencing-depth">Check sequencing depth</a>
   <ul class="collapse">
-  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load Data</a></li>
-  <li><a href="#check-sequencing-depth-r-python" id="toc-check-sequencing-depth-r-python" class="nav-link" data-scroll-target="#check-sequencing-depth-r-python">Check Sequencing Depth (R → Python)</a></li>
-  <li><a href="#compute-alpha-diversity-r" id="toc-compute-alpha-diversity-r" class="nav-link" data-scroll-target="#compute-alpha-diversity-r">Compute Alpha Diversity (R)</a></li>
-  <li><a href="#visualize-alpha-diversity-python-seaborn" id="toc-visualize-alpha-diversity-python-seaborn" class="nav-link" data-scroll-target="#visualize-alpha-diversity-python-seaborn">Visualize Alpha Diversity (Python, Seaborn)</a></li>
-  <li><a href="#depth-sensitivity-check-python" id="toc-depth-sensitivity-check-python" class="nav-link" data-scroll-target="#depth-sensitivity-check-python">Depth Sensitivity Check (Python)</a></li>
-  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a>
+  <li><a href="#save-sequencing-depth-table-for-reproducibility" id="toc-save-sequencing-depth-table-for-reproducibility" class="nav-link" data-scroll-target="#save-sequencing-depth-table-for-reproducibility">Save sequencing depth table (for reproducibility)</a></li>
+  </ul></li>
+  <li><a href="#compute-alpha-diversity" id="toc-compute-alpha-diversity" class="nav-link" data-scroll-target="#compute-alpha-diversity">Compute alpha diversity</a>
   <ul class="collapse">
-  <li><a href="#what-these-plots-show" id="toc-what-these-plots-show" class="nav-link" data-scroll-target="#what-these-plots-show">What these plots show</a></li>
-  <li><a href="#what-they-do-not-show" id="toc-what-they-do-not-show" class="nav-link" data-scroll-target="#what-they-do-not-show">What they do not show</a></li>
+  <li><a href="#save-alpha-diversity-table-for-reproducibility" id="toc-save-alpha-diversity-table-for-reproducibility" class="nav-link" data-scroll-target="#save-alpha-diversity-table-for-reproducibility">Save alpha diversity table (for reproducibility)</a></li>
   </ul></li>
-  </ul></li>
+  <li><a href="#alpha-diversity-by-body-site" id="toc-alpha-diversity-by-body-site" class="nav-link" data-scroll-target="#alpha-diversity-by-body-site">Alpha diversity by body site</a></li>
+  <li><a href="#interpretation-reminder" id="toc-interpretation-reminder" class="nav-link" data-scroll-target="#interpretation-reminder">Interpretation reminder</a></li>
   </ul>
 </nav>
     </div>
@@ -236,10 +234,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="diversity-analysis" class="level1">
-<h1>Diversity Analysis</h1>
 <p>Alpha diversity summaries are common in microbiome studies.</p>
-<p>They are useful — but only when interpreted carefully.</p>
+<p>They are useful, but only when interpreted carefully.</p>
 <p>This chapter focuses on:</p>
 <ul>
 <li>what alpha diversity measures</li>
@@ -248,324 +244,206 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <div class="cdi-message">
 <p>Alpha diversity is not a single concept.</p>
-<p>Different metrics emphasize richness, evenness, and dominance differently. Interpretation depends on the metric.</p>
+<p>Each metric measures a different aspect of within-sample structure.</p>
+<p>Always interpret alpha diversity alongside sequencing depth and preprocessing choices.</p>
 </div>
-<hr>
 <section id="load-data" class="level2">
-<h2 class="anchored" data-anchor-id="load-data">Load Data</h2>
+<h2 class="anchored" data-anchor-id="load-data">Load data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(phyloseq)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vegan)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/moving-pictures-ps.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/moving-pictures-ps.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<hr>
 </section>
-<section id="check-sequencing-depth-r-python" class="level2">
-<h2 class="anchored" data-anchor-id="check-sequencing-depth-r-python">Check Sequencing Depth (R → Python)</h2>
-<p>Alpha diversity is sensitive to sequencing depth.</p>
+<section id="check-sequencing-depth" class="level2">
+<h2 class="anchored" data-anchor-id="check-sequencing-depth">Check sequencing depth</h2>
+<p>Sequencing depth varies across samples. This affects detection of rare taxa and can influence alpha diversity.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>lib_size <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">sample_sums</span>(ps)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df_lib <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>lib_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_id =</span> <span class="fu">names</span>(lib_size),</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">library_size =</span> <span class="fu">as.numeric</span>(lib_size),</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"outputs/tables"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(df_lib, <span class="st">"outputs/tables/library-size.csv"</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df_lib<span class="sc">$</span>library_size)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    897    1838    4010    4524    7013    9820 </code></pre>
-</div>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"outputs/tables/library-size.csv"</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">5</span>))</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>sns.histplot(df[<span class="st">"library_size"</span>], bins<span class="op">=</span><span class="dv">30</span>, kde<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Sequencing depth distribution"</span>)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Library size (total reads per sample)"</span>)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Number of samples"</span>)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>sns.despine()</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(lib_df, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> library_size)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_histogram</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">bins =</span> <span class="dv">25</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"#036281"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"white"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="fl">0.3</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Sequencing depth distribution"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Library size varies across samples"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Library size (total reads per sample)"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of samples"</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme</span>(</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#475569"</span>),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> ggplot2<span class="sc">::</span><span class="fu">element_blank</span>()</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="05-diversity-analysis_files/figure-html/plot-library-size-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="05-diversity-analysis_files/figure-html/plot-library-size-1.png" class="img-fluid figure-img" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 <div class="cdi-message">
-<p>If sequencing depth varies widely, observed richness may vary even if communities are identical.</p>
-<p>Depth inspection is part of interpretation, not an optional diagnostic.</p>
+<p>If sequencing depth varies strongly, raw richness is not directly comparable.</p>
+<p>Common strategies include rarefaction (for specific use cases) or model-based approaches. For this guide, we focus on interpretation and keep preprocessing explicit.</p>
 </div>
-<hr>
+<section id="save-sequencing-depth-table-for-reproducibility" class="level3">
+<h3 class="anchored" data-anchor-id="save-sequencing-depth-table-for-reproducibility">Save sequencing depth table (for reproducibility)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"outputs/tables"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(lib_df, <span class="st">"outputs/tables/library-size.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="compute-alpha-diversity-r" class="level2">
-<h2 class="anchored" data-anchor-id="compute-alpha-diversity-r">Compute Alpha Diversity (R)</h2>
+</section>
+<section id="compute-alpha-diversity" class="level2">
+<h2 class="anchored" data-anchor-id="compute-alpha-diversity">Compute alpha diversity</h2>
+<p>We compute four common metrics:</p>
+<ul>
+<li><strong>Observed richness</strong>: number of detected taxa</li>
+<li><strong>Shannon</strong>: richness + evenness</li>
+<li><strong>Simpson</strong>: dominance-weighted diversity</li>
+<li><strong>Pielou</strong>: evenness derived from Shannon</li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>otu <span class="ot">&lt;-</span> methods<span class="sc">::</span><span class="fu">as</span>(phyloseq<span class="sc">::</span><span class="fu">otu_table</span>(ps), <span class="st">"matrix"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>phyloseq<span class="sc">::</span><span class="fu">taxa_are_rows</span>(ps)) otu <span class="ot">&lt;-</span> <span class="fu">t</span>(otu)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>observed <span class="ot">&lt;-</span> <span class="fu">colSums</span>(otu <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>shannon  <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">diversity</span>(<span class="fu">t</span>(otu), <span class="at">index =</span> <span class="st">"shannon"</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>simpson  <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">diversity</span>(<span class="fu">t</span>(otu), <span class="at">index =</span> <span class="st">"simpson"</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>pielou   <span class="ot">&lt;-</span> shannon <span class="sc">/</span> <span class="fu">log</span>(<span class="fu">pmax</span>(observed, <span class="dv">1</span>))</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>alpha_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_id =</span> <span class="fu">colnames</span>(otu),</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">observed  =</span> observed,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">shannon   =</span> shannon,</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">simpson   =</span> simpson,</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">pielou    =</span> pielou,</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq<span class="sc">::</span><span class="fu">sample_data</span>(ps))</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>sample_id <span class="ot">&lt;-</span> <span class="fu">rownames</span>(meta)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>alpha_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(alpha_df, meta, <span class="at">by =</span> <span class="st">"sample_id"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>phyloseq<span class="sc">::</span><span class="fu">taxa_are_rows</span>(ps)) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  otu <span class="ot">&lt;-</span> <span class="fu">t</span>(otu)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>observed <span class="ot">&lt;-</span> <span class="fu">colSums</span>(otu <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>shannon  <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">diversity</span>(<span class="fu">t</span>(otu), <span class="at">index =</span> <span class="st">"shannon"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>simpson  <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">diversity</span>(<span class="fu">t</span>(otu), <span class="at">index =</span> <span class="st">"simpson"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>pielou   <span class="ot">&lt;-</span> shannon <span class="sc">/</span> <span class="fu">log</span>(<span class="fu">pmax</span>(observed, <span class="dv">1</span>))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>alpha_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_id =</span> <span class="fu">colnames</span>(otu),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">observed  =</span> <span class="fu">as.numeric</span>(observed),</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">shannon   =</span> <span class="fu">as.numeric</span>(shannon),</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">simpson   =</span> <span class="fu">as.numeric</span>(simpson),</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">pielou    =</span> <span class="fu">as.numeric</span>(pielou),</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq<span class="sc">::</span><span class="fu">sample_data</span>(ps))</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>sample_id <span class="ot">&lt;-</span> <span class="fu">rownames</span>(meta)</span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">names</span>(alpha_df)</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>body_col <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"body-site"</span>, <span class="st">"body.site"</span>, <span class="st">"body_site"</span>), cols)</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(body_col) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Body site column not found. Available columns: "</span>,</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(cols, <span class="at">collapse =</span> <span class="st">", "</span>)</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>alpha_df<span class="sc">$</span>body_site <span class="ot">&lt;-</span> alpha_df[[body_col[<span class="dv">1</span>]]]</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>alpha_df<span class="sc">$</span>library_size <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">sample_sums</span>(ps)[alpha_df<span class="sc">$</span>sample_id]</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(alpha_df, <span class="st">"outputs/tables/alpha-diversity.csv"</span>)</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(alpha_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  sample_id observed  shannon   simpson    pielou barcode.sequence body.site
-1    L1S105       63 2.682108 0.8707597 0.6473620     AGTGCGATGCGT       gut
-2    L1S140       65 2.660947 0.8518507 0.6374460     ATGGCAGCTCTA       gut
-3    L1S208       85 3.121034 0.8999369 0.7025161     CTGAGATACGCG       gut
-4    L1S257       81 3.262504 0.9261295 0.7424147     CCGACTGAGATG       gut
-5    L1S281       72 3.189387 0.9082814 0.7457648     CCTCTCGTGATC       gut
-6     L1S57       70 2.905920 0.8661380 0.6839881     ACACACTATGGC       gut
-  year month day   subject reported.antibiotic.usage
-1 2009     3  17 subject-1                        No
-2 2008    10  28 subject-2                       Yes
-3 2009     1  20 subject-2                        No
-4 2009     3  17 subject-2                        No
-5 2009     4  14 subject-2                        No
-6 2009     1  20 subject-1                        No
-  days.since.experiment.start body_site library_size
-1                         140       gut         7780
-2                           0       gut         7163
-3                          84       gut         8152
-4                         140       gut         6388
-5                         168       gut         6615
-6                          84       gut         8702</code></pre>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>alpha_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(alpha_df, meta, <span class="at">by =</span> <span class="st">"sample_id"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">names</span>(alpha_df)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>body_col <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"body-site"</span>, <span class="st">"body.site"</span>, <span class="st">"body_site"</span>), cols)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(body_col) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Body site column not found. Available columns: "</span>,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(cols, <span class="at">collapse =</span> <span class="st">", "</span>)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>alpha_df<span class="sc">$</span>body_site <span class="ot">&lt;-</span> <span class="fu">as.character</span>(alpha_df[[body_col[<span class="dv">1</span>]]])</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>alpha_df <span class="ot">&lt;-</span> alpha_df[<span class="sc">!</span><span class="fu">is.na</span>(alpha_df<span class="sc">$</span>body_site) <span class="sc">&amp;</span> alpha_df<span class="sc">$</span>body_site <span class="sc">!=</span> <span class="st">""</span>, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<hr>
-</section>
-<section id="visualize-alpha-diversity-python-seaborn" class="level2">
-<h2 class="anchored" data-anchor-id="visualize-alpha-diversity-python-seaborn">Visualize Alpha Diversity (Python, Seaborn)</h2>
+<section id="save-alpha-diversity-table-for-reproducibility" class="level3">
+<h3 class="anchored" data-anchor-id="save-alpha-diversity-table-for-reproducibility">Save alpha diversity table (for reproducibility)</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"outputs/tables/alpha-diversity.csv"</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.dropna(subset<span class="op">=</span>[<span class="st">"body_site"</span>])</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>metrics <span class="op">=</span> [</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"observed"</span>, <span class="st">"Observed richness"</span>),</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"shannon"</span>, <span class="st">"Shannon diversity"</span>),</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"simpson"</span>, <span class="st">"Simpson diversity"</span>),</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"pielou"</span>, <span class="st">"Pielou evenness"</span>),</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>order <span class="op">=</span> (</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">"body_site"</span>)[<span class="st">"observed"</span>]</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    .median()</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    .sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    .index</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col, title <span class="kw">in</span> metrics:</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">5</span>))</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    sns.boxplot(</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        data<span class="op">=</span>df,</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">"body_site"</span>,</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span>col,</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        order<span class="op">=</span>order,</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        showfliers<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        width<span class="op">=</span><span class="fl">0.6</span>,</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        ax<span class="op">=</span>ax</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    sns.stripplot(</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>        data<span class="op">=</span>df,</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">"body_site"</span>,</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span>col,</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        order<span class="op">=</span>order,</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        size<span class="op">=</span><span class="dv">3</span>,</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        alpha<span class="op">=</span><span class="fl">0.4</span>,</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        jitter<span class="op">=</span><span class="fl">0.25</span>,</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>        ax<span class="op">=</span>ax</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"</span><span class="sc">{</span>title<span class="sc">}</span><span class="ss"> by body site"</span>)</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"Body site"</span>)</span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(title)</span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    sns.despine()</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    plt.setp(ax.get_xticklabels(), rotation<span class="op">=</span><span class="dv">20</span>, ha<span class="op">=</span><span class="st">"right"</span>)</span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    fig.tight_layout()</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>&lt;Axes: xlabel='body_site', ylabel='observed'&gt;
-&lt;Axes: xlabel='body_site', ylabel='observed'&gt;
-Text(0.5, 1.0, 'Observed richness by body site')
-Text(0.5, 0, 'Body site')
-Text(0, 0.5, 'Observed richness')
-[None, None, None, None, None, None, None, None]
-&lt;Axes: xlabel='body_site', ylabel='shannon'&gt;
-&lt;Axes: xlabel='body_site', ylabel='shannon'&gt;
-Text(0.5, 1.0, 'Shannon diversity by body site')
-Text(0.5, 0, 'Body site')
-Text(0, 0.5, 'Shannon diversity')
-[None, None, None, None, None, None, None, None]
-&lt;Axes: xlabel='body_site', ylabel='simpson'&gt;
-&lt;Axes: xlabel='body_site', ylabel='simpson'&gt;
-Text(0.5, 1.0, 'Simpson diversity by body site')
-Text(0.5, 0, 'Body site')
-Text(0, 0.5, 'Simpson diversity')
-[None, None, None, None, None, None, None, None]
-&lt;Axes: xlabel='body_site', ylabel='pielou'&gt;
-&lt;Axes: xlabel='body_site', ylabel='pielou'&gt;
-Text(0.5, 1.0, 'Pielou evenness by body site')
-Text(0.5, 0, 'Body site')
-Text(0, 0.5, 'Pielou evenness')
-[None, None, None, None, None, None, None, None]</code></pre>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(alpha_df, <span class="st">"outputs/tables/alpha-diversity.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="05-diversity-analysis_files/figure-html/alpha-boxplots-1.png" class="img-fluid figure-img" width="864"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="05-diversity-analysis_files/figure-html/alpha-boxplots-2.png" class="img-fluid figure-img" width="864"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="05-diversity-analysis_files/figure-html/alpha-boxplots-3.png" class="img-fluid figure-img" width="864"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="05-diversity-analysis_files/figure-html/alpha-boxplots-4.png" class="img-fluid figure-img" width="864"></p>
-</figure>
-</div>
-</div>
-</div>
-<hr>
-</section>
-<section id="depth-sensitivity-check-python" class="level2">
-<h2 class="anchored" data-anchor-id="depth-sensitivity-check-python">Depth Sensitivity Check (Python)</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"outputs/tables/alpha-diversity.csv"</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="fl">8.5</span>,<span class="dv">5</span>))</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">"library_size"</span>, y<span class="op">=</span><span class="st">"observed"</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>coef <span class="op">=</span> np.polyfit(df[<span class="st">"library_size"</span>], df[<span class="st">"observed"</span>], <span class="dv">1</span>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(df[<span class="st">"library_size"</span>].<span class="bu">min</span>(), df[<span class="st">"library_size"</span>].<span class="bu">max</span>(), <span class="dv">200</span>)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>plt.plot(x, coef[<span class="dv">0</span>]<span class="op">*</span>x <span class="op">+</span> coef[<span class="dv">1</span>])</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Observed richness vs sequencing depth"</span>)</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Library size"</span>)</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Observed richness"</span>)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>sns.despine()</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="05-diversity-analysis_files/figure-html/richness-vs-depth-9.png" class="img-fluid figure-img" width="816"></p>
-</figure>
-</div>
-</div>
-</div>
-<hr>
-</section>
-<section id="interpretation" class="level2">
-<h2 class="anchored" data-anchor-id="interpretation">Interpretation</h2>
 <div class="cdi-message">
-<p>Observed richness is highly depth-sensitive.</p>
-<p>Shannon and Simpson reduce some sensitivity but do not eliminate it.</p>
-<p>If richness increases strongly with depth, group comparisons may reflect sequencing effort rather than ecology.</p>
+<p>Alpha diversity values are not “good” or “bad” by themselves.</p>
+<p>They only become meaningful when compared across groups with a clear question and a consistent preprocessing pipeline.</p>
 </div>
-<section id="what-these-plots-show" class="level3">
-<h3 class="anchored" data-anchor-id="what-these-plots-show">What these plots show</h3>
-<ul>
-<li>Distribution of diversity within groups<br>
-</li>
-<li>Variability across samples<br>
-</li>
-<li>Dominance vs evenness patterns</li>
-</ul>
 </section>
-<section id="what-they-do-not-show" class="level3">
-<h3 class="anchored" data-anchor-id="what-they-do-not-show">What they do not show</h3>
+</section>
+<section id="alpha-diversity-by-body-site" class="level2">
+<h2 class="anchored" data-anchor-id="alpha-diversity-by-body-site">Alpha diversity by body site</h2>
+<p>We visualize metrics by body site as a descriptive summary.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>alpha_long <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  alpha_df,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"observed"</span>, <span class="st">"shannon"</span>, <span class="st">"simpson"</span>, <span class="st">"pielou"</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">names_to =</span> <span class="st">"metric"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>alpha_long<span class="sc">$</span>metric <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  alpha_long<span class="sc">$</span>metric,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"observed"</span>, <span class="st">"shannon"</span>, <span class="st">"simpson"</span>, <span class="st">"pielou"</span>),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Observed richness"</span>, <span class="st">"Shannon"</span>, <span class="st">"Simpson"</span>, <span class="st">"Pielou evenness"</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(alpha_long, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> body_site, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_boxplot</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"#e6f2f6"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"#0f172a"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="fl">0.35</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">outlier.shape =</span> <span class="cn">NA</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_jitter</span>(</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">color =</span> body_site),</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.18</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">0</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.55</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">1.8</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">facet_wrap</span>(<span class="sc">~</span> metric, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Alpha diversity by body site"</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Descriptive distributions across within-sample diversity metrics"</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Body site"</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Dark2"</span>) <span class="sc">+</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme</span>(</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#475569"</span>),</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> ggplot2<span class="sc">::</span><span class="fu">element_blank</span>(),</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">25</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.background =</span> ggplot2<span class="sc">::</span><span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-diversity-analysis_files/figure-html/plot-alpha-by-body-site-1.png" class="img-fluid figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cdi-message">
+<p>What to look for:</p>
 <ul>
-<li>Absolute abundance<br>
-</li>
-<li>Statistical significance<br>
-</li>
-<li>Causation<br>
-</li>
-<li>Confounder adjustment</li>
+<li><strong>Observed richness</strong> is most sensitive to sequencing depth and rare taxa.</li>
+<li><strong>Shannon</strong> increases when samples have many taxa with balanced abundances.</li>
+<li><strong>Simpson</strong> is driven by dominance; it changes when a few taxa take over.</li>
+<li><strong>Pielou</strong> isolates evenness; it can drop when communities become uneven.</li>
 </ul>
-<p>Alpha diversity is descriptive unless formally tested.</p>
-<hr>
-<!-- :::next
-Next → [Ordination Plots](06-ordination-plots.qmd)
-::: -->
+<p>If metrics disagree, that is a signal to interpret, not an error to hide.</p>
+</div>
+</section>
+<section id="interpretation-reminder" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-reminder">Interpretation reminder</h2>
+<p>This guide is descriptive. It shows what the data look like and how common summaries behave.</p>
+<p>To make inferential claims, you would typically add:</p>
+<ul>
+<li>statistical testing under appropriate assumptions</li>
+<li>covariate handling (confounding, repeated measures)</li>
+<li>multivariate modeling for community-level change</li>
+</ul>
+<p>Those topics belong in the premium continuation.</p>
 
 
-</section>
-</section>
 </section>
 
 </main> <!-- /main -->

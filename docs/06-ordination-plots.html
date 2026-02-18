@@ -160,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-data-structure-and-prevalence.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data Structure and Prevalence</span></a>
+  <a href="./03-data-structure-and-prevalence.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data structure and prevalence</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -202,15 +202,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#transform-to-relative-abundance" id="toc-transform-to-relative-abundance" class="nav-link" data-scroll-target="#transform-to-relative-abundance">Transform to relative abundance</a></li>
   <li><a href="#compute-braycurtis-distance" id="toc-compute-braycurtis-distance" class="nav-link" data-scroll-target="#compute-braycurtis-distance">Compute Bray–Curtis distance</a></li>
   <li><a href="#pcoa-ordination" id="toc-pcoa-ordination" class="nav-link" data-scroll-target="#pcoa-ordination">PCoA ordination</a></li>
-  <li><a href="#ordination-plot-python" id="toc-ordination-plot-python" class="nav-link" data-scroll-target="#ordination-plot-python">Ordination plot (Python)</a></li>
-  <li><a href="#reading-the-plot-responsibly" id="toc-reading-the-plot-responsibly" class="nav-link" data-scroll-target="#reading-the-plot-responsibly">Reading the plot responsibly</a>
-  <ul class="collapse">
-  <li><a href="#what-clustering-can-suggest" id="toc-what-clustering-can-suggest" class="nav-link" data-scroll-target="#what-clustering-can-suggest">What clustering can suggest</a></li>
-  <li><a href="#what-ordination-does-not-tell-you" id="toc-what-ordination-does-not-tell-you" class="nav-link" data-scroll-target="#what-ordination-does-not-tell-you">What ordination does not tell you</a></li>
-  </ul></li>
-  <li><a href="#optional-permanova-group-differences" id="toc-optional-permanova-group-differences" class="nav-link" data-scroll-target="#optional-permanova-group-differences">Optional: PERMANOVA (group differences)</a></li>
-  <li><a href="#optional-dispersion-check-beta-dispersion" id="toc-optional-dispersion-check-beta-dispersion" class="nav-link" data-scroll-target="#optional-dispersion-check-beta-dispersion">Optional: dispersion check (beta dispersion)</a></li>
-  <li><a href="#takeaway" id="toc-takeaway" class="nav-link" data-scroll-target="#takeaway">Takeaway</a></li>
+  <li><a href="#ordination-plot" id="toc-ordination-plot" class="nav-link" data-scroll-target="#ordination-plot">Ordination plot</a></li>
   </ul>
 </nav>
     </div>
@@ -253,10 +245,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="load-data" class="level2">
 <h2 class="anchored" data-anchor-id="load-data">Load data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(phyloseq)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vegan)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/moving-pictures-ps.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/moving-pictures-ps.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
 </section>
@@ -276,224 +265,91 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="compute-braycurtis-distance">Compute Bray–Curtis distance</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dist_bc <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">distance</span>(ps_rel, <span class="at">method =</span> <span class="st">"bray"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dist_bc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Compact distance overview (avoid printing the full dist object)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">nsamples</span>(ps_rel)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>n_pairs <span class="ot">&lt;-</span> <span class="fu">length</span>(dist_bc)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>dist_summary <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">quantile</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>(dist_bc),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">probs =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">names =</span> <span class="cn">TRUE</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_samples =</span> n_samples,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_pairs =</span> n_pairs,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">round</span>(dist_summary, <span class="dv">4</span>)),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">check.names =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          L1S105    L1S140    L1S208    L1S257    L1S281     L1S57     L1S76
-L1S140 0.6861838                                                            
-L1S208 0.6354987 0.3372080                                                  
-L1S257 0.6768454 0.4388476 0.2702215                                        
-L1S281 0.7195914 0.3990832 0.2594049 0.2955335                              
-L1S57  0.3106120 0.7252243 0.7422412 0.7606517 0.7471986                    
-L1S76  0.2863643 0.7120062 0.7159927 0.7417853 0.7207266 0.2189226          
-L1S8   0.4512654 0.6795777 0.7973102 0.8243985 0.8599067 0.3791323 0.3615239
-L2S155 0.9909207 0.9947296 0.9953983 0.9968108 0.9983371 0.9945933 0.9956765
-L2S175 0.9909995 0.9961843 0.9958106 0.9972231 0.9986320 0.9957774 0.9963520
-L2S204 0.9849699 0.9921312 0.9914588 0.9922580 0.9936669 0.9858092 0.9863838
-L2S222 0.9780206 0.9899924 0.9920639 0.9926342 0.9906414 0.9862469 0.9821148
-L2S240 0.9987646 0.9955455 0.9964632 0.9990941 0.9994072 0.9988327 0.9994072
-L2S309 0.9782157 0.9723896 0.9612015 0.9676636 0.9612403 0.9774489 0.9788584
-L2S357 0.9879793 0.9929860 0.9917003 0.9931128 0.9945217 0.9880474 0.9886220
-L2S382 0.9953728 0.9984643 0.9971786 0.9985911 1.0000000 0.9994254 1.0000000
-L3S242 0.4805294 0.7271526 0.8252262 0.8516653 0.8850555 0.4064393 0.3737848
-L3S294 1.0000000 0.9984643 0.9977920 0.9985911 1.0000000 0.9994254 1.0000000
-L3S313 0.9825722 0.9898827 0.9926455 0.9940580 0.9954669 0.9894526 0.9900272
-L3S341 0.9871516 1.0000000 0.9986506 0.9989042 1.0000000 0.9885655 0.9885655
-L3S360 0.9962614 0.9834881 0.9827521 0.9823923 0.9834881 0.9969040 0.9969040
-L3S378 0.7369703 0.2481115 0.3884257 0.4760457 0.4552850 0.7531227 0.7657090
-L4S112 0.9841295 0.9895734 0.9911834 0.9925959 0.9940048 0.9868355 0.9874101
-L4S137 0.9928269 0.9957148 0.9966694 0.9980819 0.9994908 0.9989163 0.9994908
-L4S63  0.9915745 0.9917973 0.9971786 0.9985911 1.0000000 0.9994254 1.0000000
-L5S104 0.9955097 1.0000000 0.9970559 0.9996869 1.0000000 0.9949351 0.9955097
-L5S155 0.9950000 0.9950000 0.9920559 0.9946869 0.9950000 0.9944254 0.9950000
-L5S174 1.0000000 1.0000000 0.9970559 0.9996869 1.0000000 0.9994254 1.0000000
-L5S203 1.0000000 0.9976326 0.9946885 0.9973195 0.9976326 0.9994254 1.0000000
-L5S222 1.0000000 1.0000000 0.9970559 0.9996869 1.0000000 0.9994254 1.0000000
-L5S240 0.9993573 0.9944196 0.9923343 0.9941066 0.9944196 0.9994254 1.0000000
-L6S20  0.9993573 0.9988330 0.9958889 0.9985199 0.9988330 0.9994254 1.0000000
-L6S68  0.9993573 0.9991639 0.9962198 0.9988508 0.9991639 0.9994254 1.0000000
-L6S93  0.9953728 0.9987056 0.9957615 0.9983925 0.9987056 0.9994254 1.0000000
-            L1S8    L2S155    L2S175    L2S204    L2S222    L2S240    L2S309
-L1S140                                                                      
-L1S208                                                                      
-L1S257                                                                      
-L1S281                                                                      
-L1S57                                                                       
-L1S76                                                                       
-L1S8                                                                        
-L2S155 0.9907000                                                            
-L2S175 0.9909489 0.5900299                                                  
-L2S204 0.9821182 0.8136886 0.7987192                                        
-L2S222 0.9848453 0.7831451 0.7634378 0.7288398                              
-L2S240 0.9940041 0.8953950 0.8455883 0.9479622 0.9426599                    
-L2S309 0.9868822 0.6926222 0.5519007 0.7472176 0.7860768 0.8544109          
-L2S357 0.9836455 0.6700035 0.5397253 0.6763091 0.8207944 0.8174676 0.4116314
-L2S382 0.9951316 0.7855241 0.7232100 0.8972879 0.8798106 0.8528749 0.7358669
-L3S242 0.1485585 0.9874233 0.9876866 0.9882576 0.9908341 0.9893738 0.9824456
-L3S294 0.9957344 0.3404962 0.6707680 0.8381657 0.8485564 0.9407977 0.7593781
-L3S313 0.9850507 0.5850473 0.3144351 0.8244462 0.8191921 0.8483894 0.5192259
-L3S341 0.9878546 0.7874072 0.7076779 0.4249104 0.8180087 0.8872448 0.6746743
-L3S360 0.9969040 0.8555033 0.8496532 0.7097201 0.4929728 0.9459853 0.7706273
-L3S378 0.7341648 0.9958178 0.9975981 0.9975981 0.9928915 0.9922015 0.9715234
-L4S112 0.9820070 0.6706180 0.5194163 0.7157193 0.7715494 0.8009639 0.4297393
-L4S137 0.9940877 0.7556410 0.5945486 0.8732522 0.8527641 0.7851720 0.6520813
-L4S63  0.9963995 0.6760549 0.6739303 0.7356027 0.7028374 0.8947491 0.4526595
-L5S104 0.9901066 0.8546264 0.8213260 0.9217288 0.9454032 0.4014934 0.8360600
-L5S155 0.9895969 0.9006047 0.8442468 0.9632679 0.9576404 0.4471313 0.8833956
-L5S174 0.9945969 0.9235950 0.8693045 0.9632679 0.9576404 0.5189250 0.9113859
-L5S203 0.9945969 0.8647620 0.7941131 0.9518683 0.9448846 0.4275352 0.8499714
-L5S222 0.9952925 0.9180795 0.8737022 0.9552545 0.9493104 0.4545292 0.8963598
-L5S240 0.9945969 0.9130923 0.8561876 0.9556681 0.9475996 0.1356729 0.8621809
-L6S20  0.9945969 0.9437228 0.9032973 0.9552305 0.9481993 0.3400844 0.9012498
-L6S68  0.9945969 0.8880466 0.8440185 0.9479972 0.9397157 0.2119781 0.8352254
-L6S93  0.9945969 0.8959667 0.8477541 0.9451642 0.9375584 0.4006562 0.8496055
-          L2S357    L2S382    L3S242    L3S294    L3S313    L3S341    L3S360
-L1S140                                                                      
-L1S208                                                                      
-L1S257                                                                      
-L1S281                                                                      
-L1S57                                                                       
-L1S76                                                                       
-L1S8                                                                        
-L2S155                                                                      
-L2S175                                                                      
-L2S204                                                                      
-L2S222                                                                      
-L2S240                                                                      
-L2S309                                                                      
-L2S357                                                                      
-L2S382 0.7310140                                                            
-L3S242 0.9828026 0.9902684                                                  
-L3S294 0.7190127 0.8585569 0.9955407                                        
-L3S313 0.4918246 0.7499370 0.9845268 0.6315274                              
-L3S341 0.5583873 0.8318545 0.9684986 0.8174127 0.7528730                    
-L3S360 0.7687725 0.8798619 1.0000000 0.8984495 0.8760740 0.7345979          
-L3S378 0.9963339 0.9975981 0.7372373 0.9975981 0.9975981 0.9830451 0.9841822
-L4S112 0.2575579 0.7019572 0.9833718 0.7322767 0.4975492 0.6043310 0.7654843
-L4S137 0.5967539 0.4768818 0.9894574 0.8293720 0.6955663 0.7637356 0.8593176
-L4S63  0.5408874 0.8090827 0.9919628 0.7465676 0.6184667 0.7375606 0.7788989
-L5S104 0.8125098 0.8394030 0.9854762 0.9298766 0.8321425 0.8666115 0.9318885
-L5S155 0.8637793 0.8641404 0.9849666 0.9542857 0.8198937 0.9116424 0.9618163
-L5S174 0.8902437 0.8916929 0.9899666 0.9526531 0.8714097 0.9296200 0.9638803
-L5S203 0.8296442 0.8178984 0.9899666 0.9264483 0.8123412 0.8979114 0.9534636
-L5S222 0.8857399 0.8871409 0.9908559 0.9493130 0.8817394 0.9145939 0.9591203
-L5S240 0.8263406 0.8625650 0.9899666 0.9526531 0.8628011 0.8962483 0.9417881
-L6S20  0.8672378 0.8898494 0.9899666 0.9584025 0.9110211 0.9297369 0.9484772
-L6S68  0.8072302 0.8238861 0.9899666 0.9398560 0.8646681 0.8714408 0.9451945
-L6S93  0.8092837 0.8158719 0.9899666 0.9361907 0.8689997 0.8597575 0.9414717
-          L3S378    L4S112    L4S137     L4S63    L5S104    L5S155    L5S174
-L1S140                                                                      
-L1S208                                                                      
-L1S257                                                                      
-L1S281                                                                      
-L1S57                                                                       
-L1S76                                                                       
-L1S8                                                                        
-L2S155                                                                      
-L2S175                                                                      
-L2S204                                                                      
-L2S222                                                                      
-L2S240                                                                      
-L2S309                                                                      
-L2S357                                                                      
-L2S382                                                                      
-L3S242                                                                      
-L3S294                                                                      
-L3S313                                                                      
-L3S341                                                                      
-L3S360                                                                      
-L3S378                                                                      
-L4S112 0.9975981                                                            
-L4S137 0.9970889 0.5680203                                                  
-L4S63  0.9962639 0.5068493 0.7707000                                        
-L5S104 0.9975981 0.8070114 0.7911794 0.9132800                              
-L5S155 0.9925981 0.8430496 0.8207389 0.9220033 0.3778339                    
-L5S174 0.9975981 0.8679552 0.8469996 0.9221059 0.5073626 0.4990604          
-L5S203 0.9952307 0.8051266 0.7738353 0.9145115 0.3362083 0.2053220 0.4396456
-L5S222 0.9975981 0.8689426 0.8382419 0.9130828 0.4418247 0.3424239 0.3885819
-L5S240 0.9920177 0.8194116 0.8028240 0.9055829 0.3809196 0.4451662 0.5493652
-L6S20  0.9964310 0.8616005 0.8386636 0.9150477 0.6114991 0.6637454 0.6181351
-L6S68  0.9967620 0.7963094 0.7640087 0.8968638 0.4620512 0.5587941 0.6122908
-L6S93  0.9963037 0.7985092 0.7466046 0.8997108 0.5636800 0.6662455 0.5615285
-          L5S203    L5S222    L5S240     L6S20     L6S68
-L1S140                                                  
-L1S208                                                  
-L1S257                                                  
-L1S281                                                  
-L1S57                                                   
-L1S76                                                   
-L1S8                                                    
-L2S155                                                  
-L2S175                                                  
-L2S204                                                  
-L2S222                                                  
-L2S240                                                  
-L2S309                                                  
-L2S357                                                  
-L2S382                                                  
-L3S242                                                  
-L3S294                                                  
-L3S313                                                  
-L3S341                                                  
-L3S360                                                  
-L3S378                                                  
-L4S112                                                  
-L4S137                                                  
-L4S63                                                   
-L5S104                                                  
-L5S155                                                  
-L5S174                                                  
-L5S203                                                  
-L5S222 0.2366401                                        
-L5S240 0.4458029 0.5049871                              
-L6S20  0.5598046 0.5913625 0.3448338                    
-L6S68  0.4859858 0.5030199 0.2389513 0.2872778          
-L6S93  0.5680773 0.5414293 0.4194497 0.4576859 0.3980151</code></pre>
+<pre><code>  n_samples n_pairs     0%    25%    50%    75% 100%
+1        34     561 0.1357 0.7634 0.9296 0.9944    1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Small preview (first 6 samples)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.matrix</span>(dist_bc)[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          L1S105    L1S140    L1S208    L1S257    L1S281     L1S57
+L1S105 0.0000000 0.6861838 0.6354987 0.6768454 0.7195914 0.3106120
+L1S140 0.6861838 0.0000000 0.3372080 0.4388476 0.3990832 0.7252243
+L1S208 0.6354987 0.3372080 0.0000000 0.2702215 0.2594049 0.7422412
+L1S257 0.6768454 0.4388476 0.2702215 0.0000000 0.2955335 0.7606517
+L1S281 0.7195914 0.3990832 0.2594049 0.2955335 0.0000000 0.7471986
+L1S57  0.3106120 0.7252243 0.7422412 0.7606517 0.7471986 0.0000000</code></pre>
 </div>
 </div>
 <hr>
 </section>
 <section id="pcoa-ordination" class="level2">
 <h2 class="anchored" data-anchor-id="pcoa-ordination">PCoA ordination</h2>
+<p>We compute a PCoA (principal coordinates analysis) on the Bray–Curtis distance matrix.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ord <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">ordinate</span>(ps_rel, <span class="at">method =</span> <span class="st">"PCoA"</span>, <span class="at">distance =</span> dist_bc)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Coordinates for the first two axes</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ord<span class="sc">$</span>vectors[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(coords) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"PC1"</span>, <span class="st">"PC2"</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Percent variance explained (if available)</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>eig <span class="ot">&lt;-</span> ord<span class="sc">$</span>values<span class="sc">$</span>Relative_eig</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>var_pc1 <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(eig) <span class="sc">&amp;&amp;</span> <span class="fu">length</span>(eig) <span class="sc">&gt;=</span> <span class="dv">1</span>) eig[<span class="dv">1</span>] <span class="sc">*</span> <span class="dv">100</span> <span class="cf">else</span> <span class="cn">NA_real_</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>var_pc2 <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(eig) <span class="sc">&amp;&amp;</span> <span class="fu">length</span>(eig) <span class="sc">&gt;=</span> <span class="dv">2</span>) eig[<span class="dv">2</span>] <span class="sc">*</span> <span class="dv">100</span> <span class="cf">else</span> <span class="cn">NA_real_</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq<span class="sc">::</span><span class="fu">sample_data</span>(ps_rel))</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>sample_id <span class="ot">&lt;-</span> <span class="fu">rownames</span>(meta)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>coords<span class="sc">$</span>sample_id <span class="ot">&lt;-</span> <span class="fu">rownames</span>(coords)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>ord_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(coords, meta, <span class="at">by =</span> <span class="st">"sample_id"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Robust body site column detection</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">names</span>(ord_df)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>body_col <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"body-site"</span>, <span class="st">"body.site"</span>, <span class="st">"body_site"</span>), cols)</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(body_col) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"Body site column not found in metadata. Available columns: "</span>, <span class="fu">paste</span>(cols, <span class="at">collapse =</span> <span class="st">", "</span>))</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>ord_df<span class="sc">$</span>body_site <span class="ot">&lt;-</span> ord_df[[body_col[<span class="dv">1</span>]]]</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Store variance labels for plotting</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>ord_df<span class="sc">$</span>pc1_label <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(var_pc1), <span class="st">"PC1"</span>, <span class="fu">sprintf</span>(<span class="st">"PC1 (%.1f%%)"</span>, var_pc1))</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>ord_df<span class="sc">$</span>pc2_label <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(var_pc2), <span class="st">"PC2"</span>, <span class="fu">sprintf</span>(<span class="st">"PC2 (%.1f%%)"</span>, var_pc2))</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"outputs/tables"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(ord_df, <span class="st">"outputs/tables/ordination-pcoa.csv"</span>)</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Save variance info (optional)</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>var_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">PC1 =</span> var_pc1, <span class="at">PC2 =</span> var_pc2)</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(var_df, <span class="st">"outputs/tables/ordination-variance.csv"</span>)</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ord_df[, <span class="fu">c</span>(<span class="st">"sample_id"</span>,<span class="st">"PC1"</span>,<span class="st">"PC2"</span>,<span class="st">"body_site"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ord <span class="ot">&lt;-</span> phyloseq<span class="sc">::</span><span class="fu">ordinate</span>(ps_rel, <span class="at">method =</span> <span class="st">"PCoA"</span>, <span class="at">distance =</span> dist_bc)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Coordinates for the first two axes</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ord<span class="sc">$</span>vectors[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(coords) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"PC1"</span>, <span class="st">"PC2"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Percent variance explained (if available)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>eig <span class="ot">&lt;-</span> ord<span class="sc">$</span>values<span class="sc">$</span>Relative_eig</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>var_pc1 <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(eig) <span class="sc">&amp;&amp;</span> <span class="fu">length</span>(eig) <span class="sc">&gt;=</span> <span class="dv">1</span>) eig[<span class="dv">1</span>] <span class="sc">*</span> <span class="dv">100</span> <span class="cf">else</span> <span class="cn">NA_real_</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>var_pc2 <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(eig) <span class="sc">&amp;&amp;</span> <span class="fu">length</span>(eig) <span class="sc">&gt;=</span> <span class="dv">2</span>) eig[<span class="dv">2</span>] <span class="sc">*</span> <span class="dv">100</span> <span class="cf">else</span> <span class="cn">NA_real_</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq<span class="sc">::</span><span class="fu">sample_data</span>(ps_rel))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>sample_id <span class="ot">&lt;-</span> <span class="fu">rownames</span>(meta)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>coords<span class="sc">$</span>sample_id <span class="ot">&lt;-</span> <span class="fu">rownames</span>(coords)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>ord_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(coords, meta, <span class="at">by =</span> <span class="st">"sample_id"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Robust body site column detection</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">names</span>(ord_df)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>body_col <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"body-site"</span>, <span class="st">"body.site"</span>, <span class="st">"body_site"</span>), cols)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(body_col) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"Body site column not found in metadata. Available columns: "</span>, <span class="fu">paste</span>(cols, <span class="at">collapse =</span> <span class="st">", "</span>))</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>ord_df<span class="sc">$</span>body_site <span class="ot">&lt;-</span> ord_df[[body_col[<span class="dv">1</span>]]]</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Axis labels with variance (if available)</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>pc1_label <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">is.na</span>(var_pc1)) <span class="st">"PC1"</span> <span class="cf">else</span> <span class="fu">sprintf</span>(<span class="st">"PC1 (%.1f%%)"</span>, var_pc1)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>pc2_label <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">is.na</span>(var_pc2)) <span class="st">"PC2"</span> <span class="cf">else</span> <span class="fu">sprintf</span>(<span class="st">"PC2 (%.1f%%)"</span>, var_pc2)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Export tables for reproducibility</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"outputs/tables"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  ord_df[, <span class="fu">c</span>(<span class="st">"sample_id"</span>, <span class="st">"PC1"</span>, <span class="st">"PC2"</span>, <span class="st">"body_site"</span>)],</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="st">"outputs/tables/ordination-pcoa.csv"</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">PC1 =</span> var_pc1, <span class="at">PC2 =</span> var_pc2),</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>  <span class="st">"outputs/tables/ordination-variance.csv"</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ord_df[, <span class="fu">c</span>(<span class="st">"sample_id"</span>, <span class="st">"PC1"</span>, <span class="st">"PC2"</span>, <span class="st">"body_site"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  sample_id       PC1        PC2 body_site
 1    L1S105 0.5304992 0.08234422       gut
@@ -510,237 +366,75 @@ L6S93  0.5680773 0.5414293 0.4194497 0.4576859 0.3980151</code></pre>
 </div>
 <hr>
 </section>
-<section id="ordination-plot-python" class="level2">
-<h2 class="anchored" data-anchor-id="ordination-plot-python">Ordination plot (Python)</h2>
-<p>This plot uses Python for a clean, modern visualization layer. It includes points, group centroids, and confidence ellipses.</p>
+<section id="ordination-plot" class="level2">
+<h2 class="anchored" data-anchor-id="ordination-plot">Ordination plot</h2>
+<p>This plot shows samples in PCoA space, colored by body site.</p>
+<ul>
+<li>Points close together have more similar community composition (under Bray–Curtis).</li>
+<li>Separation can reflect biology, but it can also reflect preprocessing choices or technical structure.</li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Ellipse</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"outputs/tables/ordination-pcoa.csv"</span>).dropna(subset<span class="op">=</span>[<span class="st">"body_site"</span>])</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Palette customization</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>palette_name <span class="op">=</span> <span class="st">"Set1"</span>   <span class="co"># Try: "Set1", "tab10", "colorblind", "viridis"</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>groups <span class="op">=</span> <span class="bu">list</span>(df[<span class="st">"body_site"</span>].astype(<span class="bu">str</span>).unique())</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>palette <span class="op">=</span> sns.color_palette(palette_name, n_colors<span class="op">=</span><span class="bu">len</span>(groups))</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>color_map <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(groups, palette))</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>, context<span class="op">=</span><span class="st">"notebook"</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_confidence_ellipse(ax, x, y, n_std<span class="op">=</span><span class="fl">1.96</span>, <span class="op">**</span>kwargs):</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.asarray(x)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> np.asarray(y)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(x) <span class="op">&lt;</span> <span class="dv">3</span>:</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    cov <span class="op">=</span> np.cov(x, y)</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> np.<span class="bu">any</span>(<span class="op">~</span>np.isfinite(cov)):</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    vals, vecs <span class="op">=</span> np.linalg.eigh(cov)</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    order <span class="op">=</span> vals.argsort()[::<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    vals <span class="op">=</span> vals[order]</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    vecs <span class="op">=</span> vecs[:, order]</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    theta <span class="op">=</span> np.degrees(np.arctan2(<span class="op">*</span>vecs[:, <span class="dv">0</span>][::<span class="op">-</span><span class="dv">1</span>]))</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    width, height <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> n_std <span class="op">*</span> np.sqrt(vals)</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    ell <span class="op">=</span> Ellipse(</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        xy<span class="op">=</span>(np.mean(x), np.mean(y)),</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>        width<span class="op">=</span>width,</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>        height<span class="op">=</span>height,</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        angle<span class="op">=</span>theta,</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        <span class="op">**</span>kwargs</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(ell)</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Axis labels with variance if present</span></span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>pc1_label <span class="op">=</span> df[<span class="st">"pc1_label"</span>].iloc[<span class="dv">0</span>] <span class="cf">if</span> <span class="st">"pc1_label"</span> <span class="kw">in</span> df.columns <span class="cf">else</span> <span class="st">"PC1"</span></span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>pc2_label <span class="op">=</span> df[<span class="st">"pc2_label"</span>].iloc[<span class="dv">0</span>] <span class="cf">if</span> <span class="st">"pc2_label"</span> <span class="kw">in</span> df.columns <span class="cf">else</span> <span class="st">"PC2"</span></span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">8.5</span>, <span class="dv">6</span>))</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Points</span></span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>df,</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"PC1"</span>,</span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"PC2"</span>,</span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"body_site"</span>,</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span>color_map,</span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    s<span class="op">=</span><span class="dv">65</span>,</span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.85</span>,</span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    edgecolor<span class="op">=</span><span class="st">"black"</span>,</span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    linewidth<span class="op">=</span><span class="fl">0.35</span>,</span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>ax</span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Centroids and ellipses</span></span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> g <span class="kw">in</span> groups:</span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>    sub <span class="op">=</span> df[df[<span class="st">"body_site"</span>].astype(<span class="bu">str</span>) <span class="op">==</span> g]</span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    cx, cy <span class="op">=</span> sub[<span class="st">"PC1"</span>].mean(), sub[<span class="st">"PC2"</span>].mean()</span>
-<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>    ax.scatter([cx], [cy], s<span class="op">=</span><span class="dv">160</span>, marker<span class="op">=</span><span class="st">"X"</span>, edgecolor<span class="op">=</span><span class="st">"black"</span>, linewidth<span class="op">=</span><span class="fl">0.6</span>, zorder<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    add_confidence_ellipse(</span>
-<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>        ax,</span>
-<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>        sub[<span class="st">"PC1"</span>],</span>
-<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>        sub[<span class="st">"PC2"</span>],</span>
-<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>        n_std<span class="op">=</span><span class="fl">1.96</span>,</span>
-<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>        facecolor<span class="op">=</span>color_map[g],</span>
-<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>        alpha<span class="op">=</span><span class="fl">0.12</span>,</span>
-<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>        edgecolor<span class="op">=</span>color_map[g],</span>
-<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>        linewidth<span class="op">=</span><span class="fl">1.2</span></span>
-<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"PCoA (Bray–Curtis distance)"</span>, weight<span class="op">=</span><span class="st">"bold"</span>)</span>
-<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(pc1_label)</span>
-<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(pc2_label)</span>
-<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, linewidth<span class="op">=</span><span class="fl">0.6</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
-<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>ax.axvline(<span class="dv">0</span>, linewidth<span class="op">=</span><span class="fl">0.6</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
-<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>sns.despine(ax<span class="op">=</span>ax)</span>
-<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>ax.legend(title<span class="op">=</span><span class="st">"Body site"</span>, bbox_to_anchor<span class="op">=</span>(<span class="fl">1.02</span>, <span class="dv">1</span>), loc<span class="op">=</span><span class="st">"upper left"</span>, frameon<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span>
-<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> ord_df</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>plot_df<span class="sc">$</span>body_site <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(plot_df<span class="sc">$</span>body_site)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Centroids for each group (for visual guidance only)</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>centroids <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(plot_df, body_site),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">PC1 =</span> <span class="fu">mean</span>(PC1, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">PC2 =</span> <span class="fu">mean</span>(PC2, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> dplyr<span class="sc">::</span><span class="fu">n</span>(),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(plot_df, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> PC1, <span class="at">y =</span> PC2, <span class="at">color =</span> body_site)) <span class="sc">+</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">stat_ellipse</span>(</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">group =</span> body_site),</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">"norm"</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="fl">0.95</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="fl">0.9</span>,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.15</span>,</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_point</span>(</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> centroids,</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> PC1, <span class="at">y =</span> PC2),</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">4</span>,</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke =</span> <span class="fl">1.2</span>,</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">5</span>,</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"PCoA ordination (Bray–Curtis)"</span>,</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Samples colored by body site. X marks show group centroids (descriptive)."</span>,</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> pc1_label,</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> pc2_label,</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Body site"</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme</span>(</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> ggplot2<span class="sc">::</span><span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> ggplot2<span class="sc">::</span><span class="fu">element_blank</span>(),</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"right"</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="06-ordination-plots_files/figure-html/plot-ordination-seaborn-1.png" class="img-fluid figure-img" width="816"></p>
+<p><img src="06-ordination-plots_files/figure-html/plot-ordination-1.png" class="img-fluid figure-img" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 <div class="cdi-message">
-<p>Interpretation starts with distance.</p>
-<p>Points close together represent samples with similar community composition under the chosen distance and preprocessing. Points far apart represent larger compositional differences.</p>
-</div>
-<hr>
-</section>
-<section id="reading-the-plot-responsibly" class="level2">
-<h2 class="anchored" data-anchor-id="reading-the-plot-responsibly">Reading the plot responsibly</h2>
-<section id="what-clustering-can-suggest" class="level3">
-<h3 class="anchored" data-anchor-id="what-clustering-can-suggest">What clustering can suggest</h3>
+<p>How to read this plot:</p>
 <ul>
-<li>Distinct clusters by group can indicate systematic differences in composition.</li>
-<li>Overlap can indicate weak separation or high within-group variability.</li>
-<li>A single outlier can stretch the geometry and distort visual separation.</li>
+<li>Clear separation suggests that body site is a major driver of between-sample differences.</li>
+<li>Overlap suggests either shared composition, within-group heterogeneity, or insufficient resolution at this preprocessing level.</li>
 </ul>
-</section>
-<section id="what-ordination-does-not-tell-you" class="level3">
-<h3 class="anchored" data-anchor-id="what-ordination-does-not-tell-you">What ordination does not tell you</h3>
-<ul>
-<li>It does not identify which taxa drive separation.</li>
-<li>It does not prove statistical significance.</li>
-<li>It does not separate technical effects from biology.</li>
-</ul>
-<div class="cdi-message">
-<p>A clean separation in an ordination plot is a hypothesis generator.</p>
-<p>It should lead to targeted follow-up, not a final conclusion.</p>
+<p>Do not treat visual separation as proof.</p>
+<p>In the premium continuation, we test whether metadata variables explain a significant fraction of variance using methods like PERMANOVA.</p>
 </div>
-<hr>
-</section>
-</section>
-<section id="optional-permanova-group-differences" class="level2">
-<h2 class="anchored" data-anchor-id="optional-permanova-group-differences">Optional: PERMANOVA (group differences)</h2>
-<p>PERMANOVA tests whether group centroids differ in multivariate space.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>meta_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq<span class="sc">::</span><span class="fu">sample_data</span>(ps_rel))</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">names</span>(meta_df)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>body_col <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"body-site"</span>, <span class="st">"body.site"</span>, <span class="st">"body_site"</span>), cols)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(body_col) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"Body site column not found for PERMANOVA."</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>meta_df<span class="sc">$</span>body_site <span class="ot">&lt;-</span> meta_df[[body_col[<span class="dv">1</span>]]]</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>vegan<span class="sc">::</span><span class="fu">adonis2</span>(dist_bc <span class="sc">~</span> body_site, <span class="at">data =</span> meta_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Permutation test for adonis under reduced model
-Permutation: free
-Number of permutations: 999
-
-vegan::adonis2(formula = dist_bc ~ body_site, data = meta_df)
-         Df SumOfSqs      R2      F Pr(&gt;F)    
-Model     3   5.2330 0.42437 7.3723  0.001 ***
-Residual 30   7.0982 0.57563                  
-Total    33  12.3312 1.00000                  
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-</div>
-<div class="cdi-message">
-<p>A significant PERMANOVA result means group centroids differ.</p>
-<p>It can also be driven by unequal within-group dispersion. This is why dispersion should be checked.</p>
-</div>
-<hr>
-</section>
-<section id="optional-dispersion-check-beta-dispersion" class="level2">
-<h2 class="anchored" data-anchor-id="optional-dispersion-check-beta-dispersion">Optional: dispersion check (beta dispersion)</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>meta_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq<span class="sc">::</span><span class="fu">sample_data</span>(ps_rel))</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">names</span>(meta_df)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>body_col <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">c</span>(<span class="st">"body-site"</span>, <span class="st">"body.site"</span>, <span class="st">"body_site"</span>), cols)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>meta_df<span class="sc">$</span>body_site <span class="ot">&lt;-</span> meta_df[[body_col[<span class="dv">1</span>]]]</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>bd <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">betadisper</span>(dist_bc, <span class="at">group =</span> meta_df<span class="sc">$</span>body_site)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>bd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Homogeneity of multivariate dispersions
-
-Call: vegan::betadisper(d = dist_bc, group = meta_df$body_site)
-
-No. of Positive Eigenvalues: 29
-No. of Negative Eigenvalues: 4
-
-Average distance to median:
-       gut  left palm right palm     tongue 
-    0.3950     0.4991     0.5487     0.3160 
-
-Eigenvalues for PCoA axes:
-(Showing 8 of 33 eigenvalues)
- PCoA1  PCoA2  PCoA3  PCoA4  PCoA5  PCoA6  PCoA7  PCoA8 
-3.8480 2.6660 1.1788 0.8376 0.6125 0.5090 0.4639 0.4153 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>vegan<span class="sc">::</span><span class="fu">permutest</span>(bd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Permutation test for homogeneity of multivariate dispersions
-Permutation: free
-Number of permutations: 999
-
-Response: Distances
-          Df  Sum Sq  Mean Sq      F N.Perm Pr(&gt;F)    
-Groups     3 0.28883 0.096278 9.0096    999  0.001 ***
-Residuals 30 0.32059 0.010686                         
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-</div>
-<div class="cdi-message">
-<p>If dispersion differs strongly across groups, PERMANOVA can appear significant even without true centroid separation.</p>
-<p>Interpretation should report both results.</p>
-</div>
-<hr>
-</section>
-<section id="takeaway" class="level2">
-<h2 class="anchored" data-anchor-id="takeaway">Takeaway</h2>
-<ul>
-<li>Ordination summarizes dissimilarity, not biology.</li>
-<li>The distance metric and preprocessing choices define the geometry.</li>
-<li>Visual separation is descriptive. Statistical tests support interpretation.</li>
-<li>Always check dispersion when using PERMANOVA.</li>
-</ul>
-<!-- :::next
-Next → [Heatmaps and Patterns](07-heatmaps-and-patterns.qmd)
-::: -->
 
 
 </section>
