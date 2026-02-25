@@ -1,0 +1,532 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Microbiome Data Visualization",
+    "section": "",
+    "text": "Free Guide · Updated Feb 2026",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>index.html</span>"
+    ]
+  },
+  {
+    "objectID": "01-preface.html",
+    "href": "01-preface.html",
+    "title": "Preface",
+    "section": "",
+    "text": "Welcome\nMicrobiome studies frequently present:\nThese figures are familiar.\nInterpreting them correctly is less common.\nA plot can look structured and convincing. That does not automatically make it biologically meaningful.\nThis guide provides a structured pathway from raw feature tables to careful, defensible visual interpretation.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Preface</span>"
+    ]
+  },
+  {
+    "objectID": "01-preface.html#welcome",
+    "href": "01-preface.html#welcome",
+    "title": "Preface",
+    "section": "",
+    "text": "composition bar plots\n\nalpha diversity summaries\n\nordination maps\n\nheatmaps and clustering patterns",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Preface</span>"
+    ]
+  },
+  {
+    "objectID": "01-preface.html#what-this-guide-does",
+    "href": "01-preface.html#what-this-guide-does",
+    "title": "Preface",
+    "section": "What This Guide Does",
+    "text": "What This Guide Does\nThis is a structured, applied guide to microbiome data visualization using R.\nWe begin with a validated phyloseq object derived from publicly available QIIME2 outputs and build forward from there.\nThe emphasis is not on generating every possible figure. It is on understanding:\n\nwhat each visualization encodes\n\nhow preprocessing decisions shape what you see\n\nhow filtering alters apparent patterns\n\nhow compositional constraints affect interpretation\n\nClarity in microbiome analysis begins with structural awareness.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Preface</span>"
+    ]
+  },
+  {
+    "objectID": "01-preface.html#how-this-guide-is-organized",
+    "href": "01-preface.html#how-this-guide-is-organized",
+    "title": "Preface",
+    "section": "How This Guide Is Organized",
+    "text": "How This Guide Is Organized\nThe chapters follow a logical progression:\n\nDatasets\nUnderstanding the internal structure of the phyloseq object\nData Structure and Prevalence\nSparsity, sequencing depth variation, and filtering logic\nComposition Visualization\nRelative abundance, aggregation choices, and compositional limits\nDiversity Analysis\nWhat alpha diversity measures — and what it does not\nOrdination Plots\nWhat visual separation implies — and what it does not\nHeatmaps and Patterns\nRecognizing structure without over-claiming\nSummary and Next Steps\nExtending analysis responsibly\n\nEach chapter combines reproducible code with interpretive framing.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Preface</span>"
+    ]
+  },
+  {
+    "objectID": "01-preface.html#who-this-guide-is-for",
+    "href": "01-preface.html#who-this-guide-is-for",
+    "title": "Preface",
+    "section": "Who This Guide Is For",
+    "text": "Who This Guide Is For\nThis guide is written for:\n\nResearchers working with 16S microbiome outputs from QIIME2, mothur, or similar pipelines\n\nLearners comfortable running R code who want stronger interpretive reasoning\n\nAnalysts preparing figures for manuscripts, theses, or reports\n\nNo advanced statistics are required.\nWhat is required is careful thinking.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Preface</span>"
+    ]
+  },
+  {
+    "objectID": "01-preface.html#relationship-to-imap",
+    "href": "01-preface.html#relationship-to-imap",
+    "title": "Preface",
+    "section": "Relationship to iMAP",
+    "text": "Relationship to iMAP\nThe iMAP repositories provide modular steps for microbiome data processing and exploratory workflows.\nThis guide does not replace those pipelines.\nIt begins after feature tables and taxonomy have been generated.\nIt strengthens the interpretive layer by connecting visualization choices to the questions they are intended to answer.\nTogether, iMAP and this guide form a coherent path from sequencing output to biological insight.\n\n\nA figure is not a conclusion.\nInterpretation requires understanding structure before pattern.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Preface</span>"
+    ]
+  },
+  {
+    "objectID": "02-datasets.html",
+    "href": "02-datasets.html",
+    "title": "Datasets",
+    "section": "",
+    "text": "Load the canonical object\nThis guide uses the QIIME2 Moving Pictures demo dataset.\nThe data are downloaded as QIIME2 artifacts and converted into a single phyloseq object using reproducible scripts:\nThose scripts:\nFrom this point onward, we work with one structured object.\nps &lt;- readRDS(\"data/moving-pictures-ps.rds\")",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Datasets</span>"
+    ]
+  },
+  {
+    "objectID": "02-datasets.html#load-the-canonical-object",
+    "href": "02-datasets.html#load-the-canonical-object",
+    "title": "Datasets",
+    "section": "",
+    "text": "A microbiome dataset is not a single table.\nIt is a coordinated structure containing:\n\nan abundance matrix\n\nsample-level metadata\n\ntaxonomic annotation\n\nAll components must align exactly.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Datasets</span>"
+    ]
+  },
+  {
+    "objectID": "02-datasets.html#inspect-the-otu-table",
+    "href": "02-datasets.html#inspect-the-otu-table",
+    "title": "Datasets",
+    "section": "Inspect the OTU table",
+    "text": "Inspect the OTU table\n\notu &lt;- methods::as(phyloseq::otu_table(ps), \"matrix\")\n\nif (!phyloseq::taxa_are_rows(ps)) {\n  otu &lt;- t(otu)\n}\n\notu[1:6, 1:6]\n\n                                 L1S105 L1S140 L1S208 L1S257 L1S281 L1S57\n33e2cadd9d0b2b4ebeb6261766032e4a      0      0      0      0      0     0\n5656d8b980bfee07e29e8fc119850901      0      0      0      0      0     0\n7d893311a14a858907d4c8ca21d32dc4      0      0      0      0      0     0\necf9eb9fa3970ff27a221e626395c75d      0      0      0      0      0     0\nacfe4c003905a7074aeaf385b78ad9e0      0      0    104     50     47     0\n80b20e907aa4fcf2309796bc303d151d      0     48      0     11      0     0\n\n\n\nThis is a small slice of the count matrix.\n\nRows represent taxa (ASVs)\n\nColumns represent samples\n\nValues are raw read counts\n\nMost entries are zero.\nSparsity is not a technical artifact.\nIt is a biological reality.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Datasets</span>"
+    ]
+  },
+  {
+    "objectID": "02-datasets.html#inspect-sample-metadata",
+    "href": "02-datasets.html#inspect-sample-metadata",
+    "title": "Datasets",
+    "section": "Inspect sample metadata",
+    "text": "Inspect sample metadata\n\nhead(phyloseq::sample_data(ps))\n\n       barcode.sequence body.site year month day   subject\nL1S105     AGTGCGATGCGT       gut 2009     3  17 subject-1\nL1S140     ATGGCAGCTCTA       gut 2008    10  28 subject-2\nL1S208     CTGAGATACGCG       gut 2009     1  20 subject-2\nL1S257     CCGACTGAGATG       gut 2009     3  17 subject-2\nL1S281     CCTCTCGTGATC       gut 2009     4  14 subject-2\nL1S57      ACACACTATGGC       gut 2009     1  20 subject-1\n       reported.antibiotic.usage days.since.experiment.start\nL1S105                        No                         140\nL1S140                       Yes                           0\nL1S208                        No                          84\nL1S257                        No                         140\nL1S281                        No                         168\nL1S57                         No                          84\n\n\n\nMetadata provides biological and experimental context.\nWithout metadata, abundance values have no meaning.\nVisualization is always performed relative to metadata.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Datasets</span>"
+    ]
+  },
+  {
+    "objectID": "02-datasets.html#inspect-taxonomy",
+    "href": "02-datasets.html#inspect-taxonomy",
+    "title": "Datasets",
+    "section": "Inspect taxonomy",
+    "text": "Inspect taxonomy\n\nhead(phyloseq::tax_table(ps))\n\nTaxonomy Table:     [6 taxa by 7 taxonomic ranks]:\n                                 Kingdom    Phylum          \n33e2cadd9d0b2b4ebeb6261766032e4a \"Bacteria\" \"Firmicutes\"    \n5656d8b980bfee07e29e8fc119850901 \"Bacteria\" \"Firmicutes\"    \n7d893311a14a858907d4c8ca21d32dc4 \"Bacteria\" \"Firmicutes\"    \necf9eb9fa3970ff27a221e626395c75d \"Bacteria\" \"Proteobacteria\"\nacfe4c003905a7074aeaf385b78ad9e0 \"Bacteria\" \"Firmicutes\"    \n80b20e907aa4fcf2309796bc303d151d \"Bacteria\" \"Firmicutes\"    \n                                 Class                 Order          \n33e2cadd9d0b2b4ebeb6261766032e4a \"Clostridia\"          \"Clostridiales\"\n5656d8b980bfee07e29e8fc119850901 \"Clostridia\"          \"Clostridiales\"\n7d893311a14a858907d4c8ca21d32dc4 \"Clostridia\"          \"Clostridiales\"\necf9eb9fa3970ff27a221e626395c75d \"Alphaproteobacteria\" \"Rickettsiales\"\nacfe4c003905a7074aeaf385b78ad9e0 \"Clostridia\"          \"Clostridiales\"\n80b20e907aa4fcf2309796bc303d151d \"Clostridia\"          \"Clostridiales\"\n                                 Family            Genus         Species     \n33e2cadd9d0b2b4ebeb6261766032e4a \"Peptococcaceae\"  \"Peptococcus\" NA          \n5656d8b980bfee07e29e8fc119850901 \"Peptococcaceae\"  \"Peptococcus\" NA          \n7d893311a14a858907d4c8ca21d32dc4 \"Peptococcaceae\"  \"Peptococcus\" NA          \necf9eb9fa3970ff27a221e626395c75d \"mitochondria\"    \"Raphanus\"    \"sativus\"   \nacfe4c003905a7074aeaf385b78ad9e0 \"Ruminococcaceae\" \"Gemmiger\"    \"formicilis\"\n80b20e907aa4fcf2309796bc303d151d \"Ruminococcaceae\" NA            NA          \n\n\n\nTaxonomy links sequence variants to biological hierarchy.\nAggregation (for example genus-level barplots) depends entirely on this mapping.\nIf taxonomy is inconsistent, interpretation becomes unstable.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Datasets</span>"
+    ]
+  },
+  {
+    "objectID": "02-datasets.html#structural-integrity",
+    "href": "02-datasets.html#structural-integrity",
+    "title": "Datasets",
+    "section": "Structural integrity",
+    "text": "Structural integrity\n\nall(\n  phyloseq::sample_names(ps) ==\n  rownames(phyloseq::sample_data(ps))\n)\n\n[1] TRUE\n\n\n\nA valid phyloseq object guarantees alignment across components.\nMany downstream errors originate from mismatched sample identifiers.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Datasets</span>"
+    ]
+  },
+  {
+    "objectID": "03-data-structure-and-prevalence.html",
+    "href": "03-data-structure-and-prevalence.html",
+    "title": "Data structure and prevalence",
+    "section": "",
+    "text": "Load data\nMicrobiome count data is structurally sparse and uneven.\nThis chapter focuses on:\nps &lt;- readRDS(\"data/moving-pictures-ps.rds\")",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data structure and prevalence</span>"
+    ]
+  },
+  {
+    "objectID": "03-data-structure-and-prevalence.html#plot-theme",
+    "href": "03-data-structure-and-prevalence.html#plot-theme",
+    "title": "Data structure and prevalence",
+    "section": "Plot theme",
+    "text": "Plot theme\nThis guide uses a consistent CDI plotting theme. It is defined once and reused across lessons.\n\nsource(\"scripts/R/cdi-plot-theme.R\")\ncdi_teal   &lt;- \"#036281\"\ncdi_yellow &lt;- \"#f7c546\"\ncdi_muted  &lt;- \"#475569\"",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data structure and prevalence</span>"
+    ]
+  },
+  {
+    "objectID": "03-data-structure-and-prevalence.html#sparsity",
+    "href": "03-data-structure-and-prevalence.html#sparsity",
+    "title": "Data structure and prevalence",
+    "section": "Sparsity",
+    "text": "Sparsity\n\notu &lt;- methods::as(phyloseq::otu_table(ps), \"matrix\")\n\nif (!phyloseq::taxa_are_rows(ps)) {\n  otu &lt;- t(otu)\n}\n\nzero_prop &lt;- mean(otu == 0)\nzero_prop\n\n[1] 0.9111154\n\n\n\nA high proportion of zeros is normal in microbiome data.\nFiltering decisions are not cosmetic. They determine which patterns become visible.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data structure and prevalence</span>"
+    ]
+  },
+  {
+    "objectID": "03-data-structure-and-prevalence.html#library-size-variation",
+    "href": "03-data-structure-and-prevalence.html#library-size-variation",
+    "title": "Data structure and prevalence",
+    "section": "Library size variation",
+    "text": "Library size variation\n\nlib_size &lt;- phyloseq::sample_sums(ps)\n\ndf_lib &lt;- data.frame(\n  sample_id = names(lib_size),\n  library_size = as.numeric(lib_size),\n  stringsAsFactors = FALSE\n)\n\ndir.create(\"outputs/tables\", recursive = TRUE, showWarnings = FALSE)\nreadr::write_csv(df_lib, \"outputs/tables/library-size.csv\")\n\n\nLibrary size distribution\n\nggplot2::ggplot(df_lib, ggplot2::aes(x = library_size)) +\n  ggplot2::geom_histogram(\n    ggplot2::aes(y = ggplot2::after_stat(density)),\n    bins = 30,\n    fill = cdi_teal,\n    color = \"white\",\n    alpha = 0.90\n  ) +\n  ggplot2::geom_density(color = cdi_yellow, linewidth = 1.2) +\n  ggplot2::scale_y_continuous(labels = scales::label_number()) +\n  ggplot2::labs(\n    title = \"Library size distribution\",\n    subtitle = \"Sequencing depth varies across samples\",\n    x = \"Library size (total reads per sample)\",\n    y = \"Density\"\n  ) +\n  cdi_theme() +\n  ggplot2::theme(\n    plot.subtitle = ggplot2::element_text(color = cdi_muted)\n  )\n\n\n\n\n\n\n\n\n\nWhen sequencing depth varies, raw counts are not comparable.\nNormalization is required for fair comparison across samples.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data structure and prevalence</span>"
+    ]
+  },
+  {
+    "objectID": "03-data-structure-and-prevalence.html#detection-and-prevalence",
+    "href": "03-data-structure-and-prevalence.html#detection-and-prevalence",
+    "title": "Data structure and prevalence",
+    "section": "Detection and prevalence",
+    "text": "Detection and prevalence\n\ndetection &lt;- 1\n\ntaxa_prev_n &lt;- rowSums(otu &gt;= detection)\n\ntaxa_prev_df &lt;- data.frame(\n  taxon = rownames(otu),\n  prevalence_n = taxa_prev_n,\n  prevalence_frac = taxa_prev_n / ncol(otu),\n  stringsAsFactors = FALSE\n)\n\ndir.create(\"outputs/tables\", recursive = TRUE, showWarnings = FALSE)\nreadr::write_csv(taxa_prev_df, \"outputs/tables/taxa-prevalence.csv\")\n\nsummary(taxa_prev_df$prevalence_n)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n  1.000   1.000   2.000   3.022   4.000  26.000 \n\n\n\nPrevalence distribution\n\n# Histogram view\nggplot2::ggplot(taxa_prev_df, ggplot2::aes(x = prevalence_n)) +\n  ggplot2::geom_histogram(\n    bins = 30,\n    fill = cdi_teal,\n    color = \"white\",\n    alpha = 0.90\n  ) +\n  ggplot2::labs(\n    title = \"Taxon prevalence distribution\",\n    subtitle = \"Most taxa are detected in few samples\",\n    x = \"Number of samples detected\",\n    y = \"Number of taxa\"\n  ) +\n  cdi_theme() +\n  ggplot2::theme(\n    plot.subtitle = ggplot2::element_text(color = cdi_muted)\n  )\n\n\n\n\n\n\n\n# ECDF view\nggplot2::ggplot(taxa_prev_df, ggplot2::aes(x = prevalence_n)) +\n  ggplot2::stat_ecdf(geom = \"step\", color = cdi_teal, linewidth = 1.2) +\n  ggplot2::labs(\n    title = \"ECDF of taxon prevalence\",\n    subtitle = \"Fraction of taxa detected by at least N samples\",\n    x = \"Number of samples detected\",\n    y = \"Fraction of taxa\"\n  ) +\n  cdi_theme() +\n  ggplot2::theme(\n    plot.subtitle = ggplot2::element_text(color = cdi_muted)\n  )\n\n\n\n\n\n\n\n\n\nMost taxa are observed in only a small fraction of samples.\nPrevalence filtering improves clarity, but it also changes the feature space.\nFiltering rules must be stated explicitly.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data structure and prevalence</span>"
+    ]
+  },
+  {
+    "objectID": "03-data-structure-and-prevalence.html#simple-prevalence-filter",
+    "href": "03-data-structure-and-prevalence.html#simple-prevalence-filter",
+    "title": "Data structure and prevalence",
+    "section": "Simple prevalence filter",
+    "text": "Simple prevalence filter\n\nmin_prev_frac &lt;- 0.10\n\nkeep_taxa &lt;- taxa_prev_df$taxon[taxa_prev_df$prevalence_frac &gt;= min_prev_frac]\n\nps_prev &lt;- phyloseq::prune_taxa(keep_taxa, ps)\n\nc(\n  original_taxa = phyloseq::ntaxa(ps),\n  after_filter = phyloseq::ntaxa(ps_prev)\n)\n\noriginal_taxa  after_filter \n          770           204 \n\n\n\nPrevalence filtering reduces dimensionality and improves readability.\nIt can also change ordination and diversity results. Interpretation should acknowledge these choices.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data structure and prevalence</span>"
+    ]
+  },
+  {
+    "objectID": "03-data-structure-and-prevalence.html#relative-abundance-preview",
+    "href": "03-data-structure-and-prevalence.html#relative-abundance-preview",
+    "title": "Data structure and prevalence",
+    "section": "Relative abundance preview",
+    "text": "Relative abundance preview\n\nps_rel &lt;- phyloseq::transform_sample_counts(ps, function(x) x / sum(x))\nrange(phyloseq::sample_sums(ps_rel))\n\n[1] 1 1\n\n\n\nAfter transformation, each sample sums to 1.\nThis enables clearer visualization, but does not remove compositional constraints.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data structure and prevalence</span>"
+    ]
+  },
+  {
+    "objectID": "04-composition-visualization.html",
+    "href": "04-composition-visualization.html",
+    "title": "Composition Visualization",
+    "section": "",
+    "text": "Load data\nComposition plots are often the first figures shown in microbiome studies.\nBar plots at the phylum or genus level are common. They appear intuitive. They are also easy to misinterpret.\nThis chapter focuses on:\nps &lt;- readRDS(\"data/moving-pictures-ps.rds\")\n\nsource(\"scripts/R/cdi-plot-theme.R\")\npal &lt;- cdi_palette()",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Composition Visualization</span>"
+    ]
+  },
+  {
+    "objectID": "04-composition-visualization.html#transform-to-relative-abundance",
+    "href": "04-composition-visualization.html#transform-to-relative-abundance",
+    "title": "Composition Visualization",
+    "section": "Transform to relative abundance",
+    "text": "Transform to relative abundance\nRaw counts are not comparable across samples with different sequencing depth.\n\nps_rel &lt;- phyloseq::transform_sample_counts(ps, function(x) x / sum(x))\nrange(phyloseq::sample_sums(ps_rel))\n\n[1] 1 1\n\n\n\nEach sample now sums to 1.\nThis enables proportional comparison across samples. However, relative abundance introduces compositional constraints. An increase in one taxon must decrease another.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Composition Visualization</span>"
+    ]
+  },
+  {
+    "objectID": "04-composition-visualization.html#aggregate-to-genus-level",
+    "href": "04-composition-visualization.html#aggregate-to-genus-level",
+    "title": "Composition Visualization",
+    "section": "Aggregate to genus level",
+    "text": "Aggregate to genus level\n\nps_genus &lt;- phyloseq::tax_glom(ps_rel, taxrank = \"Genus\")\nphyloseq::ntaxa(ps_genus)\n\n[1] 197\n\n\nRemove taxa without genus assignment:\n\nps_genus &lt;- phyloseq::subset_taxa(ps_genus, !is.na(Genus))\nphyloseq::ntaxa(ps_genus)\n\n[1] 197\n\n\n\nAggregation simplifies visualization, but it also hides within-genus variation.\nResolution is always a trade-off.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Composition Visualization</span>"
+    ]
+  },
+  {
+    "objectID": "04-composition-visualization.html#identify-top-genera",
+    "href": "04-composition-visualization.html#identify-top-genera",
+    "title": "Composition Visualization",
+    "section": "Identify top genera",
+    "text": "Identify top genera\nTo improve readability, select the globally most abundant genera.\n\ngenus_abundance &lt;- phyloseq::taxa_sums(ps_genus)\ntop_genera &lt;- names(sort(genus_abundance, decreasing = TRUE))[1:10]\n\nps_top &lt;- phyloseq::prune_taxa(top_genera, ps_genus)\nphyloseq::ntaxa(ps_top)\n\n[1] 10",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Composition Visualization</span>"
+    ]
+  },
+  {
+    "objectID": "04-composition-visualization.html#prepare-composition-table-for-plotting",
+    "href": "04-composition-visualization.html#prepare-composition-table-for-plotting",
+    "title": "Composition Visualization",
+    "section": "Prepare composition table for plotting",
+    "text": "Prepare composition table for plotting\nWe compute mean relative abundance by body site, then visualize it using two R figures: a stacked bar chart and a heatmap.\n\n# Long format table (sample-level)\ndf_comp &lt;- phyloseq::psmelt(ps_top)\n\n# Detect column names robustly (psmelt can vary by dataset)\ncols &lt;- names(df_comp)\n\nsample_col &lt;- dplyr::case_when(\n  \"Sample\" %in% cols ~ \"Sample\",\n  \"SampleID\" %in% cols ~ \"SampleID\",\n  \"sample_id\" %in% cols ~ \"sample_id\",\n  TRUE ~ NA_character_\n)\n\nbody_col &lt;- dplyr::case_when(\n  \"body-site\" %in% cols ~ \"body-site\",\n  \"body.site\" %in% cols ~ \"body.site\",\n  \"body_site\" %in% cols ~ \"body_site\",\n  TRUE ~ NA_character_\n)\n\nif (is.na(sample_col) || is.na(body_col)) {\n  stop(\n    \"Expected columns not found in psmelt output. \",\n    \"Available columns: \", paste(cols, collapse = \", \"), \". \",\n    \"Missing: \",\n    paste(\n      c(if (is.na(sample_col)) \"Sample/SampleID/sample_id\" else NULL,\n        if (is.na(body_col)) \"body-site/body.site/body_site\" else NULL),\n      collapse = \", \"\n    )\n  )\n}\n\n# Keep only what we need and standardize names\ndf_comp &lt;- df_comp[, c(sample_col, \"Abundance\", \"Genus\", body_col)]\nnames(df_comp) &lt;- c(\"Sample\", \"Abundance\", \"Genus\", \"body_site\")\n\n# Mean relative abundance by (body_site, Genus)\ndf_mean &lt;- stats::aggregate(\n  Abundance ~ body_site + Genus,\n  data = df_comp,\n  FUN = mean\n)\n\ndir.create(\"outputs/tables\", recursive = TRUE, showWarnings = FALSE)\nreadr::write_csv(df_mean, \"outputs/tables/mean-composition-body-site-genus.csv\")\n\nhead(df_mean)\n\n   body_site           Genus    Abundance\n1        gut     Bacteroides 0.5623933731\n2  left palm     Bacteroides 0.0074999258\n3 right palm     Bacteroides 0.1497196754\n4     tongue     Bacteroides 0.0023039649\n5        gut Corynebacterium 0.0001221555\n6  left palm Corynebacterium 0.1273285793\n\n\n\nFor overview plots, averaging within a group can reveal stable patterns that are hard to see at the sample level.\nThis is descriptive summarization, not inference.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Composition Visualization</span>"
+    ]
+  },
+  {
+    "objectID": "04-composition-visualization.html#composition-by-body-site",
+    "href": "04-composition-visualization.html#composition-by-body-site",
+    "title": "Composition Visualization",
+    "section": "Composition by body site",
+    "text": "Composition by body site\n\n# Order body sites by total mean abundance across the plotted genera\nbody_order &lt;- df_mean |&gt;\n  dplyr::group_by(body_site) |&gt;\n  dplyr::summarise(total = sum(Abundance, na.rm = TRUE), .groups = \"drop\") |&gt;\n  dplyr::arrange(dplyr::desc(total)) |&gt;\n  dplyr::pull(body_site)\n\ndf_mean$body_site &lt;- factor(df_mean$body_site, levels = body_order)\n\nggplot2::ggplot(df_mean, ggplot2::aes(x = body_site, y = Abundance, fill = Genus)) +\n  ggplot2::geom_col(width = 0.75, color = \"white\", linewidth = 0.25) +\n  ggplot2::scale_fill_brewer(palette = \"Set3\") +\n  ggplot2::labs(\n    title = \"Mean genus composition by body site\",\n    subtitle = \"Top genera only; proportions are relative abundance\",\n    x = \"Body site\",\n    y = \"Mean relative abundance\"\n  ) +\n  cdi_theme() +\n  ggplot2::theme(\n    axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, vjust = 1),\n    legend.position = \"right\"\n  )\n\n\n\n\n\n\n\n\n\nThese bars show average proportions, not absolute microbial load.\nA taxon can appear to “increase” in relative abundance even if its absolute abundance is unchanged.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Composition Visualization</span>"
+    ]
+  },
+  {
+    "objectID": "04-composition-visualization.html#composition-heatmap",
+    "href": "04-composition-visualization.html#composition-heatmap",
+    "title": "Composition Visualization",
+    "section": "Composition heatmap",
+    "text": "Composition heatmap\n\n# Order genera by overall mean abundance (top to bottom in legend)\ngenus_order &lt;- df_mean |&gt;\n  dplyr::group_by(Genus) |&gt;\n  dplyr::summarise(total = sum(Abundance, na.rm = TRUE), .groups = \"drop\") |&gt;\n  dplyr::arrange(dplyr::desc(total)) |&gt;\n  dplyr::pull(Genus)\n\ndf_heat &lt;- df_mean\ndf_heat$Genus &lt;- factor(df_heat$Genus, levels = genus_order)\ndf_heat$body_site &lt;- factor(df_heat$body_site, levels = levels(df_mean$body_site))\n\nggplot2::ggplot(df_heat, ggplot2::aes(x = Genus, y = body_site, fill = Abundance)) +\n  ggplot2::geom_tile(color = \"white\", linewidth = 0.25) +\n  ggplot2::labs(\n    title = \"Mean composition heatmap\",\n    subtitle = \"Mean relative abundance of top genera by body site\",\n    x = NULL,\n    y = \"Body site\",\n    fill = NULL\n  ) +\n  cdi_scale_fill_heat(option = \"magma\", show_legend = TRUE) +\n  cdi_theme() +\n  ggplot2::theme(\n    axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5),\n    panel.grid = ggplot2::element_blank(),\n    legend.position = \"right\"\n  )\n\n\n\n\n\n\n\n\n\nHeatmaps emphasize patterns of dominance and absence across groups.\nThey are sensitive to aggregation level and filtering choices.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Composition Visualization</span>"
+    ]
+  },
+  {
+    "objectID": "04-composition-visualization.html#limitations-of-composition-plots",
+    "href": "04-composition-visualization.html#limitations-of-composition-plots",
+    "title": "Composition Visualization",
+    "section": "Limitations of composition plots",
+    "text": "Limitations of composition plots\nComposition plots:\n\nare constrained by constant-sum scaling\n\ncannot reveal absolute abundance changes\n\nare sensitive to filtering and aggregation level\n\n\nComposition plots answer: “What proportion of the community does each taxon occupy?”\nThey do not answer: “Did the taxon increase in absolute abundance?”",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Composition Visualization</span>"
+    ]
+  },
+  {
+    "objectID": "05-diversity-analysis.html",
+    "href": "05-diversity-analysis.html",
+    "title": "Diversity Analysis",
+    "section": "",
+    "text": "Load data\nAlpha diversity summaries are common in microbiome studies.\nThey are useful, but only when interpreted carefully.\nThis chapter focuses on:\nps &lt;- readRDS(\"data/moving-pictures-ps.rds\")\n\nsource(\"scripts/R/cdi-plot-theme.R\")\npal &lt;- cdi_palette()",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Diversity Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "05-diversity-analysis.html#check-sequencing-depth",
+    "href": "05-diversity-analysis.html#check-sequencing-depth",
+    "title": "Diversity Analysis",
+    "section": "Check sequencing depth",
+    "text": "Check sequencing depth\nSequencing depth varies across samples. This affects detection of rare taxa and can influence alpha diversity.\n\nlib_size &lt;- phyloseq::sample_sums(ps)\n\nlib_df &lt;- data.frame(\n  sample_id = names(lib_size),\n  library_size = as.numeric(lib_size),\n  stringsAsFactors = FALSE\n)\n\ndir.create(\"outputs/tables\", recursive = TRUE, showWarnings = FALSE)\nreadr::write_csv(lib_df, \"outputs/tables/library-size.csv\")\n\n\nggplot2::ggplot(lib_df, ggplot2::aes(x = library_size)) +\n  cdi_geom_histogram(bins = 25, colored = FALSE) +\n  ggplot2::labs(\n    title = \"Sequencing depth distribution\",\n    subtitle = \"Library size varies across samples\",\n    x = \"Library size (total reads per sample)\",\n    y = \"Number of samples\"\n  ) +\n  cdi_theme() +\n  ggplot2::theme(\n    legend.position = \"none\"\n  )\n\n\n\n\n\n\n\n\n\nIf sequencing depth varies strongly, raw richness is not directly comparable.\nCommon strategies include rarefaction (for specific use cases) or model-based approaches. For this guide, we focus on interpretation and keep preprocessing explicit.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Diversity Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "05-diversity-analysis.html#compute-alpha-diversity",
+    "href": "05-diversity-analysis.html#compute-alpha-diversity",
+    "title": "Diversity Analysis",
+    "section": "Compute alpha diversity",
+    "text": "Compute alpha diversity\nWe compute four common metrics:\n\nObserved richness: number of detected taxa\n\nShannon: richness plus evenness\n\nSimpson: dominance-weighted diversity\n\nPielou: evenness derived from Shannon\n\n\notu &lt;- methods::as(phyloseq::otu_table(ps), \"matrix\")\n\nif (!phyloseq::taxa_are_rows(ps)) {\n  otu &lt;- t(otu)\n}\n\nobserved &lt;- colSums(otu &gt; 0)\nshannon  &lt;- vegan::diversity(t(otu), index = \"shannon\")\nsimpson  &lt;- vegan::diversity(t(otu), index = \"simpson\")\npielou   &lt;- shannon / log(pmax(observed, 1))\n\nalpha_df &lt;- data.frame(\n  sample_id = colnames(otu),\n  observed  = as.numeric(observed),\n  shannon   = as.numeric(shannon),\n  simpson   = as.numeric(simpson),\n  pielou    = as.numeric(pielou),\n  stringsAsFactors = FALSE\n)\n\nmeta &lt;- data.frame(phyloseq::sample_data(ps))\nmeta$sample_id &lt;- rownames(meta)\n\nalpha_df &lt;- merge(alpha_df, meta, by = \"sample_id\", all.x = TRUE)\n\ncols &lt;- names(alpha_df)\nbody_col &lt;- intersect(c(\"body-site\", \"body.site\", \"body_site\"), cols)\n\nif (length(body_col) == 0) {\n  stop(\n    \"Body site column not found. Available columns: \",\n    paste(cols, collapse = \", \")\n  )\n}\n\nalpha_df$body_site &lt;- as.character(alpha_df[[body_col[1]]])\nalpha_df &lt;- alpha_df[!is.na(alpha_df$body_site) & alpha_df$body_site != \"\", , drop = FALSE]\n\n\nSave alpha diversity table (for reproducibility)\n\ndir.create(\"outputs/tables\", recursive = TRUE, showWarnings = FALSE)\nreadr::write_csv(alpha_df, \"outputs/tables/alpha-diversity.csv\")\n\n\nAlpha diversity values are not “good” or “bad” by themselves.\nThey become meaningful only when compared across groups with a clear question and a consistent preprocessing pipeline.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Diversity Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "05-diversity-analysis.html#alpha-diversity-by-body-site",
+    "href": "05-diversity-analysis.html#alpha-diversity-by-body-site",
+    "title": "Diversity Analysis",
+    "section": "Alpha diversity by body site",
+    "text": "Alpha diversity by body site\nWe visualize metrics by body site as a descriptive summary.\n\nalpha_long &lt;- tidyr::pivot_longer(\n  alpha_df,\n  cols = c(\"observed\", \"shannon\", \"simpson\", \"pielou\"),\n  names_to = \"metric\",\n  values_to = \"value\"\n)\n\nalpha_long$metric &lt;- factor(\n  alpha_long$metric,\n  levels = c(\"observed\", \"shannon\", \"simpson\", \"pielou\"),\n  labels = c(\"Observed richness\", \"Shannon\", \"Simpson\", \"Pielou evenness\")\n)\n\n\nggplot2::ggplot(alpha_long, ggplot2::aes(x = body_site, y = value)) +\n  ggplot2::geom_boxplot(\n    fill = pal$bg,\n    color = pal$ink,\n    linewidth = 0.35,\n    outlier.shape = NA\n  ) +\n  ggplot2::geom_jitter(\n    ggplot2::aes(color = body_site),\n    width = 0.18,\n    height = 0,\n    alpha = 0.50,\n    size = 1.7,\n    show.legend = FALSE\n  ) +\n  ggplot2::facet_wrap(~ metric, scales = \"free_y\", ncol = 2) +\n  ggplot2::labs(\n    title = \"Alpha diversity by body site\",\n    subtitle = \"Descriptive distributions across within-sample diversity metrics\",\n    x = \"Body site\",\n    y = NULL\n  ) +\n  ggplot2::scale_color_brewer(palette = \"Dark2\") +\n  cdi_theme() +\n  ggplot2::theme(\n    axis.text.x = ggplot2::element_text(angle = 25, hjust = 1),\n    legend.position = \"none\"\n  )\n\n\n\n\n\n\n\n\n\nWhat to look for:\n\nObserved richness is most sensitive to sequencing depth and rare taxa.\n\nShannon increases when samples have many taxa with balanced abundances.\n\nSimpson is driven by dominance; it changes when a few taxa take over.\n\nPielou isolates evenness; it can drop when communities become uneven.\n\nIf metrics disagree, that is a signal to interpret, not an error to hide.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Diversity Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "05-diversity-analysis.html#interpretation-reminder",
+    "href": "05-diversity-analysis.html#interpretation-reminder",
+    "title": "Diversity Analysis",
+    "section": "Interpretation reminder",
+    "text": "Interpretation reminder\nThis guide is descriptive. It shows what the data look like and how common summaries behave.\nTo make inferential claims, you would typically add:\n\nstatistical testing under appropriate assumptions\n\ncovariate handling (confounding, repeated measures)\n\nmultivariate modeling for community-level change\n\nThose topics belong in the premium continuation.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Diversity Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "06-ordination-plots.html",
+    "href": "06-ordination-plots.html",
+    "title": "Ordination plots",
+    "section": "",
+    "text": "Load data\nOrdination reduces a complex community table into a small number of axes that summarize between-sample dissimilarity.\nThe goal is not to compress biology into two numbers. The goal is to visualize structure, then interpret it cautiously.\nThis chapter focuses on:\nps &lt;- readRDS(\"data/moving-pictures-ps.rds\")",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Ordination plots</span>"
+    ]
+  },
+  {
+    "objectID": "06-ordination-plots.html#plot-theme",
+    "href": "06-ordination-plots.html#plot-theme",
+    "title": "Ordination plots",
+    "section": "Plot theme",
+    "text": "Plot theme\nWe use the shared CDI plotting theme to keep figures consistent across the guide.\n\nsource(\"scripts/R/cdi-plot-theme.R\")",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Ordination plots</span>"
+    ]
+  },
+  {
+    "objectID": "06-ordination-plots.html#transform-to-relative-abundance",
+    "href": "06-ordination-plots.html#transform-to-relative-abundance",
+    "title": "Ordination plots",
+    "section": "Transform to relative abundance",
+    "text": "Transform to relative abundance\nBray–Curtis is commonly applied to relative abundance in exploratory ordination. This does not remove compositional constraints, but it enables clearer comparison across samples.\n\nps_rel &lt;- phyloseq::transform_sample_counts(ps, function(x) x / sum(x))\n\n\nRelative abundance ordination is descriptive.\nIf you change filtering or aggregation choices, the geometry can change. This is expected and should be reported.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Ordination plots</span>"
+    ]
+  },
+  {
+    "objectID": "06-ordination-plots.html#compute-braycurtis-distance",
+    "href": "06-ordination-plots.html#compute-braycurtis-distance",
+    "title": "Ordination plots",
+    "section": "Compute Bray–Curtis distance",
+    "text": "Compute Bray–Curtis distance\n\ndist_bc &lt;- phyloseq::distance(ps_rel, method = \"bray\")\n\n# Compact overview (avoid printing the full dist object)\nn_samples &lt;- phyloseq::nsamples(ps_rel)\nn_pairs &lt;- length(dist_bc)\n\ndist_summary &lt;- stats::quantile(\n  as.numeric(dist_bc),\n  probs = c(0, 0.25, 0.5, 0.75, 1),\n  names = TRUE\n)\n\ndist_overview &lt;- data.frame(\n  n_samples = n_samples,\n  n_pairs = n_pairs,\n  min = unname(dist_summary[1]),\n  q25 = unname(dist_summary[2]),\n  median = unname(dist_summary[3]),\n  q75 = unname(dist_summary[4]),\n  max = unname(dist_summary[5]),\n  row.names = NULL,\n  check.names = FALSE\n)\n\ndist_overview\n\n  n_samples n_pairs       min       q25  median       q75 max\n1        34     561 0.1356729 0.7634378 0.92962 0.9944254   1\n\n\n\nDistance matrix preview\nA small preview is useful for sanity checking, but we avoid printing the full matrix.\n\nas.matrix(dist_bc)[1:6, 1:6]\n\n          L1S105    L1S140    L1S208    L1S257    L1S281     L1S57\nL1S105 0.0000000 0.6861838 0.6354987 0.6768454 0.7195914 0.3106120\nL1S140 0.6861838 0.0000000 0.3372080 0.4388476 0.3990832 0.7252243\nL1S208 0.6354987 0.3372080 0.0000000 0.2702215 0.2594049 0.7422412\nL1S257 0.6768454 0.4388476 0.2702215 0.0000000 0.2955335 0.7606517\nL1S281 0.7195914 0.3990832 0.2594049 0.2955335 0.0000000 0.7471986\nL1S57  0.3106120 0.7252243 0.7422412 0.7606517 0.7471986 0.0000000",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Ordination plots</span>"
+    ]
+  },
+  {
+    "objectID": "06-ordination-plots.html#pcoa-ordination",
+    "href": "06-ordination-plots.html#pcoa-ordination",
+    "title": "Ordination plots",
+    "section": "PCoA ordination",
+    "text": "PCoA ordination\nWe compute a PCoA (principal coordinates analysis) on the Bray–Curtis distance matrix.\n\nord &lt;- phyloseq::ordinate(ps_rel, method = \"PCoA\", distance = dist_bc)\n\n# Coordinates for the first two axes\ncoords &lt;- as.data.frame(ord$vectors[, 1:2])\ncolnames(coords) &lt;- c(\"PC1\", \"PC2\")\ncoords$sample_id &lt;- rownames(coords)\n\n# Percent variance explained (if available)\neig &lt;- ord$values$Relative_eig\nvar_pc1 &lt;- if (!is.null(eig) && length(eig) &gt;= 1) eig[1] * 100 else NA_real_\nvar_pc2 &lt;- if (!is.null(eig) && length(eig) &gt;= 2) eig[2] * 100 else NA_real_\n\nmeta &lt;- data.frame(phyloseq::sample_data(ps_rel))\nmeta$sample_id &lt;- rownames(meta)\n\nord_df &lt;- merge(coords, meta, by = \"sample_id\", all.x = TRUE)\n\n# Robust body site column detection\ncols &lt;- names(ord_df)\nbody_col &lt;- intersect(c(\"body-site\", \"body.site\", \"body_site\"), cols)\n\nif (length(body_col) == 0) {\n  stop(\"Body site column not found in metadata. Available columns: \", paste(cols, collapse = \", \"))\n}\n\nord_df$body_site &lt;- ord_df[[body_col[1]]]\n\n# Axis labels with variance (if available)\npc1_label &lt;- if (is.na(var_pc1)) \"PC1\" else sprintf(\"PC1 (%.1f%%)\", var_pc1)\npc2_label &lt;- if (is.na(var_pc2)) \"PC2\" else sprintf(\"PC2 (%.1f%%)\", var_pc2)\n\n# Export tables for reproducibility\ndir.create(\"outputs/tables\", recursive = TRUE, showWarnings = FALSE)\n\nreadr::write_csv(\n  ord_df[, c(\"sample_id\", \"PC1\", \"PC2\", \"body_site\")],\n  \"outputs/tables/ordination-pcoa.csv\"\n)\n\nreadr::write_csv(\n  data.frame(PC1 = var_pc1, PC2 = var_pc2),\n  \"outputs/tables/ordination-variance.csv\"\n)\n\nord_df[1:6, c(\"sample_id\", \"PC1\", \"PC2\", \"body_site\")]\n\n  sample_id       PC1        PC2 body_site\n1    L1S105 0.5304992 0.08234422       gut\n2    L1S140 0.5307266 0.08936046       gut\n3    L1S208 0.5185157 0.08949133       gut\n4    L1S257 0.4958304 0.08236422       gut\n5    L1S281 0.4923930 0.08187132       gut\n6     L1S57 0.5167373 0.08345351       gut\n\n\n\nPCoA axes are not biological variables.\nThey are directions that best summarize pairwise dissimilarities. Axis labels are useful, but do not overinterpret them.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Ordination plots</span>"
+    ]
+  },
+  {
+    "objectID": "06-ordination-plots.html#ordination-plot",
+    "href": "06-ordination-plots.html#ordination-plot",
+    "title": "Ordination plots",
+    "section": "Ordination plot",
+    "text": "Ordination plot\nThis plot shows samples in PCoA space, colored by body site.\n\nPoints close together have more similar community composition (under Bray–Curtis).\nSeparation can reflect biology, but it can also reflect preprocessing choices or technical structure.\n\n\nplot_df &lt;- ord_df\nplot_df$body_site &lt;- as.factor(plot_df$body_site)\n\n# Centroids for each group (for visual guidance only)\ncentroids &lt;- dplyr::group_by(plot_df, body_site) |&gt;\n  dplyr::summarise(\n    PC1 = mean(PC1, na.rm = TRUE),\n    PC2 = mean(PC2, na.rm = TRUE),\n    n = dplyr::n(),\n    .groups = \"drop\"\n  )\n\nggplot2::ggplot(plot_df, ggplot2::aes(x = PC1, y = PC2, color = body_site)) +\n  ggplot2::geom_point(size = 3.2, alpha = 0.88) +\n  ggplot2::stat_ellipse(\n    ggplot2::aes(group = body_site),\n    type = \"norm\",\n    level = 0.95,\n    linewidth = 0.9,\n    alpha = 0.12,\n    show.legend = FALSE\n  ) +\n  ggplot2::geom_point(\n    data = centroids,\n    ggplot2::aes(x = PC1, y = PC2),\n    shape = 4,\n    stroke = 1.3,\n    size = 5.2,\n    show.legend = FALSE\n  ) +\n  ggplot2::labs(\n    title = \"PCoA ordination (Bray–Curtis)\",\n    subtitle = \"Samples colored by body site. X marks show group centroids (descriptive).\",\n    x = pc1_label,\n    y = pc2_label,\n    color = \"Body site\"\n  ) +\n  cdi_theme() +\n  ggplot2::theme(\n    legend.position = \"right\"\n  )\n\n\n\n\n\n\n\n\n\nHow to read this plot:\n\nClear separation suggests that body site is a major driver of between-sample differences.\nOverlap suggests either shared composition, within-group heterogeneity, or insufficient resolution at this preprocessing level.\n\nDo not treat visual separation as proof.\nIn the premium continuation, we test whether metadata variables explain a significant fraction of variance using methods like PERMANOVA.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Ordination plots</span>"
+    ]
+  },
+  {
+    "objectID": "07-heatmaps-and-patterns.html",
+    "href": "07-heatmaps-and-patterns.html",
+    "title": "Heatmaps and Patterns",
+    "section": "",
+    "text": "Load data\nHeatmaps summarize many taxa across many samples at once.\nThey are useful for pattern discovery, but they are also easy to overread. A heatmap is a visualization of a transformed matrix, not a direct picture of biology.\nThis chapter focuses on:\nps &lt;- base::readRDS(\"data/moving-pictures-ps.rds\")\n\n# CDI shared theme + palette (used across chapters)\nsource(\"scripts/R/cdi-plot-theme.R\")\npal &lt;- cdi_palette()",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Heatmaps and Patterns</span>"
+    ]
+  },
+  {
+    "objectID": "07-heatmaps-and-patterns.html#decide-what-to-heatmap",
+    "href": "07-heatmaps-and-patterns.html#decide-what-to-heatmap",
+    "title": "Heatmaps and Patterns",
+    "section": "Decide what to heatmap",
+    "text": "Decide what to heatmap\nHeatmaps work best when the matrix:\n\nhas been transformed (raw counts are dominated by sequencing depth)\nhas a limited number of taxa (readable signal)\nis aligned to metadata (so patterns can be interpreted)\n\nIn this guide we will:\n\nConvert counts to relative abundance\nAggregate to the Genus level\nSelect the top genera by mean relative abundance\nVisualize patterns across body site as a compact heatmap",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Heatmaps and Patterns</span>"
+    ]
+  },
+  {
+    "objectID": "07-heatmaps-and-patterns.html#transform-and-aggregate-to-genus",
+    "href": "07-heatmaps-and-patterns.html#transform-and-aggregate-to-genus",
+    "title": "Heatmaps and Patterns",
+    "section": "Transform and aggregate to genus",
+    "text": "Transform and aggregate to genus\n\nps_rel &lt;- phyloseq::transform_sample_counts(ps, function(x) x / sum(x))\n\nps_genus &lt;- phyloseq::tax_glom(ps_rel, taxrank = \"Genus\")\nps_genus &lt;- phyloseq::subset_taxa(ps_genus, !is.na(Genus))\n\nphyloseq::ntaxa(ps_genus)\n\n[1] 197\n\n\n\nAggregation improves readability, but it hides within-genus variation.\nHeatmap patterns should be interpreted at the chosen resolution.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Heatmaps and Patterns</span>"
+    ]
+  },
+  {
+    "objectID": "07-heatmaps-and-patterns.html#select-top-genera",
+    "href": "07-heatmaps-and-patterns.html#select-top-genera",
+    "title": "Heatmaps and Patterns",
+    "section": "Select top genera",
+    "text": "Select top genera\n\ntop_n &lt;- 30\n\ngenus_mean &lt;- phyloseq::taxa_sums(ps_genus) / phyloseq::nsamples(ps_genus)\ntop_genera &lt;- names(sort(genus_mean, decreasing = TRUE))[seq_len(top_n)]\n\nps_top &lt;- phyloseq::prune_taxa(top_genera, ps_genus)\nphyloseq::ntaxa(ps_top)\n\n[1] 30",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Heatmaps and Patterns</span>"
+    ]
+  },
+  {
+    "objectID": "07-heatmaps-and-patterns.html#build-a-compact-table-for-visualization",
+    "href": "07-heatmaps-and-patterns.html#build-a-compact-table-for-visualization",
+    "title": "Heatmaps and Patterns",
+    "section": "Build a compact table for visualization",
+    "text": "Build a compact table for visualization\nWe compute mean relative abundance per body site and genus. This reduces clutter while keeping patterns interpretable.\n\ndf_comp &lt;- phyloseq::psmelt(ps_top)\n\n# Standardize body site column name (handles `body-site`, `body.site`, `body_site`)\ncols &lt;- names(df_comp)\nbody_col &lt;- intersect(c(\"body-site\", \"body.site\", \"body_site\"), cols)\n\nif (length(body_col) == 0) {\n  stop(\"Body site column not found. Available columns: \", paste(cols, collapse = \", \"))\n}\n\ndf_comp$body_site &lt;- df_comp[[body_col[1]]]\n\ndf_mean &lt;- df_comp |&gt;\n  dplyr::filter(!is.na(body_site) & body_site != \"\") |&gt;\n  dplyr::group_by(body_site, Genus) |&gt;\n  dplyr::summarise(mean_abundance = mean(Abundance, na.rm = TRUE), .groups = \"drop\")\n\n# Order genera by global mean abundance for more stable reading\ngenus_order &lt;- df_mean |&gt;\n  dplyr::group_by(Genus) |&gt;\n  dplyr::summarise(global_mean = mean(mean_abundance, na.rm = TRUE), .groups = \"drop\") |&gt;\n  dplyr::arrange(dplyr::desc(global_mean)) |&gt;\n  dplyr::pull(Genus)\n\ndf_mean$Genus &lt;- factor(df_mean$Genus, levels = genus_order)\n\n# Order body sites by total mean abundance\nbody_order &lt;- df_mean |&gt;\n  dplyr::group_by(body_site) |&gt;\n  dplyr::summarise(total = sum(mean_abundance, na.rm = TRUE), .groups = \"drop\") |&gt;\n  dplyr::arrange(dplyr::desc(total)) |&gt;\n  dplyr::pull(body_site)\n\ndf_mean$body_site &lt;- factor(df_mean$body_site, levels = body_order)\n\n# Export for reproducibility\nbase::dir.create(\"outputs/tables\", recursive = TRUE, showWarnings = FALSE)\nreadr::write_csv(df_mean, \"outputs/tables/heatmap-mean-body-site-genus.csv\")",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Heatmaps and Patterns</span>"
+    ]
+  },
+  {
+    "objectID": "07-heatmaps-and-patterns.html#heatmap-of-mean-genus-composition-by-body-site",
+    "href": "07-heatmaps-and-patterns.html#heatmap-of-mean-genus-composition-by-body-site",
+    "title": "Heatmaps and Patterns",
+    "section": "Heatmap of mean genus composition by body site",
+    "text": "Heatmap of mean genus composition by body site\nWe use a viridis scale (option = \"magma\") because it provides strong contrast and is broadly readable.\n\nggplot2::ggplot(df_mean, ggplot2::aes(x = Genus, y = body_site, fill = mean_abundance)) +\n  ggplot2::geom_tile(color = \"white\", linewidth = 0.25) +\n  ggplot2::scale_fill_viridis_c(\n    option = \"magma\",\n    name = \"Mean rel.\\nabundance\"\n  ) +\n  ggplot2::labs(\n    title = \"Mean genus composition heatmap\",\n    subtitle = \"Aggregated by body site (relative abundance)\"\n  ) +\n  cdi_theme() +\n  ggplot2::theme(\n    axis.title = ggplot2::element_blank(),\n    axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1, size = 9),\n    axis.text.y = ggplot2::element_text(size = 10),\n    panel.grid = ggplot2::element_blank(),\n    legend.position = \"right\"\n  )\n\n\n\n\n\n\n\n\n\nHow to read this heatmap:\n\nCompare patterns across rows (body sites)\nCompare which genera dominate within a body site\nLook for genera that appear consistently across sites versus those that are site-specific\n\nRemember: these are relative abundances averaged across samples.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Heatmaps and Patterns</span>"
+    ]
+  },
+  {
+    "objectID": "07-heatmaps-and-patterns.html#avoid-common-heatmap-traps",
+    "href": "07-heatmaps-and-patterns.html#avoid-common-heatmap-traps",
+    "title": "Heatmaps and Patterns",
+    "section": "Avoid common heatmap traps",
+    "text": "Avoid common heatmap traps\nHeatmaps can be misleading when:\n\ntaxa are too numerous (pattern becomes noise)\ntransformation choices are not stated\nclustering is overinterpreted as causation\ngroups are averaged without acknowledging within-group variation\n\n\nA heatmap is a summary view.\nTreat it as a pattern-finding tool, then follow up with targeted plots and formal testing.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Heatmaps and Patterns</span>"
+    ]
+  },
+  {
+    "objectID": "08-summary-and-next-steps.html",
+    "href": "08-summary-and-next-steps.html",
+    "title": "Summary and Next Steps",
+    "section": "",
+    "text": "What you can now do\nThis guide introduced a practical workflow for visualizing microbiome data.\nThe goal was not to memorize plotting code. The goal was to build a reliable interpretation habit:\nBy the end of this guide you can:",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
+    ]
+  },
+  {
+    "objectID": "08-summary-and-next-steps.html#what-you-can-now-do",
+    "href": "08-summary-and-next-steps.html#what-you-can-now-do",
+    "title": "Summary and Next Steps",
+    "section": "",
+    "text": "load and reuse a canonical phyloseq object\nrecognize sparsity as a biological feature, not an error\ninterpret sequencing depth and why it matters for richness\nbuild composition plots that are honest about limitations\nread diversity plots without confusing depth effects for biology\ninterpret ordination as distance-based geometry\nuse heatmaps to discover co-occurrence patterns",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
+    ]
+  },
+  {
+    "objectID": "08-summary-and-next-steps.html#a-compact-checklist-for-new-datasets",
+    "href": "08-summary-and-next-steps.html#a-compact-checklist-for-new-datasets",
+    "title": "Summary and Next Steps",
+    "section": "A compact checklist for new datasets",
+    "text": "A compact checklist for new datasets\nUse this checklist whenever you start a new microbiome dataset.\n\nStructure\n\nDo samples align across abundance and metadata?\nAre taxa identifiers consistent across tables?\nAre there missing or duplicated sample IDs?\n\n\n\nSparsity\n\nWhat fraction of the matrix is zero?\nAre there taxa present in only 1–2 samples?\nWill a prevalence threshold improve clarity?\n\n\n\nDepth\n\nAre library sizes comparable across groups?\nDoes observed richness strongly track depth?\nDo conclusions change under a depth sensitivity check?\n\n\n\nComposition\n\nAre you comparing proportions or absolute abundance?\nDid you state the taxonomic rank and top-N choice?\nWould the story change if you aggregated differently?\n\n\n\nDiversity and ordination\n\nWhich alpha metric matches the question?\nWhich beta distance matches the data and interpretation?\nIf you run PERMANOVA, did you check dispersion?\n\n\nMost interpretation problems come from skipping one of the checklist blocks.\nThe fix is almost always upstream, not in the plotting code.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
+    ]
+  },
+  {
+    "objectID": "08-summary-and-next-steps.html#save-a-small-results-snapshot",
+    "href": "08-summary-and-next-steps.html#save-a-small-results-snapshot",
+    "title": "Summary and Next Steps",
+    "section": "Save a small results snapshot",
+    "text": "Save a small results snapshot\nA practical habit is to export a small results bundle that can be reloaded later.\nThis guide already writes key tables under outputs/tables/. Here, we create a compact snapshot folder for quick reuse.\nWe export:\n\nlibrary size table\na minimal alpha diversity table\nordination coordinates\n\n\nbase::dir.create(\"outputs/snapshots\", recursive = TRUE, showWarnings = FALSE)\n\nps &lt;- base::readRDS(\"data/moving-pictures-ps.rds\")\n\n# ----------------------------\n# Library size\n# ----------------------------\nlib_size &lt;- phyloseq::sample_sums(ps)\n\ndf_lib &lt;- data.frame(\n  sample_id = names(lib_size),\n  library_size = as.numeric(lib_size),\n  stringsAsFactors = FALSE\n)\n\nreadr::write_csv(df_lib, \"outputs/snapshots/library-size.csv\")\n\n# ----------------------------\n# Alpha diversity (minimal)\n# ----------------------------\notu &lt;- methods::as(phyloseq::otu_table(ps), \"matrix\")\nif (!phyloseq::taxa_are_rows(ps)) {\n  otu &lt;- t(otu)\n}\n\nobserved &lt;- colSums(otu &gt; 0)\nshannon  &lt;- vegan::diversity(t(otu), index = \"shannon\")\n\nalpha_df &lt;- data.frame(\n  sample_id = colnames(otu),\n  observed = as.numeric(observed),\n  shannon = as.numeric(shannon),\n  stringsAsFactors = FALSE\n)\n\nmeta &lt;- data.frame(phyloseq::sample_data(ps))\nmeta$sample_id &lt;- rownames(meta)\n\nalpha_df &lt;- base::merge(alpha_df, meta, by = \"sample_id\", all.x = TRUE)\n\ncols &lt;- names(alpha_df)\nbody_col &lt;- intersect(c(\"body-site\", \"body.site\", \"body_site\"), cols)\n\nif (length(body_col) == 0) {\n  stop(\"Body site column not found. Available columns: \", paste(cols, collapse = \", \"))\n}\n\nalpha_df$body_site &lt;- as.character(alpha_df[[body_col[1]]])\n\nreadr::write_csv(alpha_df, \"outputs/snapshots/alpha-diversity-mini.csv\")\n\n# ----------------------------\n# Ordination coordinates (PCoA; Bray–Curtis; relative abundance)\n# ----------------------------\nps_rel &lt;- phyloseq::transform_sample_counts(ps, function(x) x / sum(x))\n\ndist_bc &lt;- phyloseq::distance(ps_rel, method = \"bray\")\nord &lt;- phyloseq::ordinate(ps_rel, method = \"PCoA\", distance = dist_bc)\n\ncoords &lt;- as.data.frame(ord$vectors[, 1:2])\ncolnames(coords) &lt;- c(\"PC1\", \"PC2\")\ncoords$sample_id &lt;- rownames(coords)\n\nord_df &lt;- base::merge(coords, meta, by = \"sample_id\", all.x = TRUE)\n\ncols2 &lt;- names(ord_df)\nbody_col2 &lt;- intersect(c(\"body-site\", \"body.site\", \"body_site\"), cols2)\n\nif (length(body_col2) == 0) {\n  stop(\"Body site column not found in ordination metadata. Available columns: \", paste(cols2, collapse = \", \"))\n}\n\nord_df$body_site &lt;- as.character(ord_df[[body_col2[1]]])\n\nreadr::write_csv(ord_df, \"outputs/snapshots/ordination-pcoa.csv\")\n\nbase::list.files(\"outputs/snapshots\")\n\n[1] \"alpha-diversity-mini.csv\" \"library-size.csv\"        \n[3] \"ordination-pcoa.csv\"     \n\n\n\nA snapshot makes your workflow restartable.\nYou can reproduce plots without rerunning every upstream step. This is a small habit that prevents large confusion later.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
+    ]
+  },
+  {
+    "objectID": "08-summary-and-next-steps.html#where-to-go-next",
+    "href": "08-summary-and-next-steps.html#where-to-go-next",
+    "title": "Summary and Next Steps",
+    "section": "Where to go next",
+    "text": "Where to go next\nIf you are continuing with this dataset:\n\nCompare taxonomic resolution (Family, Genus, ASV) and assess stability.\nExplore alternative distances (Jaccard for presence/absence; Aitchison for compositional structure).\nIdentify taxa that most strongly contribute to observed separation.\n\nIf you are starting a new dataset:\n\nRe-run the structural checklist.\nRebuild a canonical object.\nKeep transformation and filtering decisions explicit and version controlled.\n\n\nThe fastest way to improve interpretation is not adding more plots.\nIt is strengthening the logic that connects each plot to a defensible biological question.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
+    ]
+  },
+  {
+    "objectID": "08-summary-and-next-steps.html#beyond-descriptive-visualization",
+    "href": "08-summary-and-next-steps.html#beyond-descriptive-visualization",
+    "title": "Summary and Next Steps",
+    "section": "Beyond descriptive visualization",
+    "text": "Beyond descriptive visualization\nThis guide focused on structural clarity and visualization:\n\ncomposition\ndiversity\nordination\nheatmap patterns\n\nThese approaches describe what the data look like.\nThey do not yet address:\n\nwhether differences are statistically robust\nhow much variance is explained by specific variables\nhow covariates influence interpretation\nhow to reconcile conflicting signals across metrics\n\nThose questions require inferential modeling and more advanced analytical design.\nThe premium continuation extends into:\n\nPERMANOVA and multivariate hypothesis testing\nconstrained ordination\nvariance partitioning\nmodel-based approaches\nstructured interpretation workflows\n\nThe objective is not to add more figures. It is to reason more rigorously about biological signal.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
+    ]
+  },
+  {
+    "objectID": "08-summary-and-next-steps.html#continue-the-learning-path",
+    "href": "08-summary-and-next-steps.html#continue-the-learning-path",
+    "title": "Summary and Next Steps",
+    "section": "Continue the learning path",
+    "text": "Continue the learning path\nThe premium continuation of this guide expands these topics in depth:\n→ https://complexdatainsights.com/microbiome-premium\nIt builds from the same dataset and structure, but moves from descriptive visualization toward formal inference and analytical decision-making.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Summary and Next Steps</span>"
+    ]
+  }
+]
