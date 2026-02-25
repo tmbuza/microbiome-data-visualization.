@@ -4,6 +4,7 @@ project:
 
 book:
   title: "Microbiome Data Visualization"
+  subtitle: "From Raw Counts to Interpretable Community Patterns"
   chapters:
     - index.qmd
     - 01-preface.qmd
