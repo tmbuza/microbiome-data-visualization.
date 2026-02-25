@@ -1,5 +1,12 @@
 # Datasets {#datasets}
 
+:::cdi-message
+- **ID:** MICRO-L02
+- **Type:** Lesson
+- **Audience:** Public
+- **Theme:** Canonical phyloseq object and structural alignment
+:::
+
 This guide uses the **QIIME2 Moving Pictures** demo dataset.
 
 The data are downloaded as QIIME2 artifacts and converted into a single
@@ -10,18 +17,18 @@ The data are downloaded as QIIME2 artifacts and converted into a single
 
 Those scripts:
 
-- download the feature table, taxonomy, and metadata
-- align sample identifiers
-- construct a validated `phyloseq` object
-- save a canonical `.rds` file for reuse across chapters
+- download the feature table, taxonomy, and metadata  
+- align sample identifiers  
+- construct a validated `phyloseq` object  
+- save a canonical `.rds` file for reuse across chapters  
 
 From this point onward, we work with one structured object.
+
+---
 
 ## Load the canonical object
 
 ```{r load-canonical-phyloseq}
-library(phyloseq)
-
 ps <- readRDS("data/moving-pictures-ps.rds")
 ```
 
@@ -29,12 +36,15 @@ ps <- readRDS("data/moving-pictures-ps.rds")
 A microbiome dataset is not a single table.
 
 It is a coordinated structure containing:
+
 - an abundance matrix  
 - sample-level metadata  
 - taxonomic annotation  
 
 All components must align exactly.
 :::
+
+---
 
 ## Inspect the OTU table
 
@@ -57,8 +67,11 @@ This is a small slice of the count matrix.
 
 Most entries are zero.
 
-Sparsity is not a technical artifact. It is a biological reality.
+Sparsity is not a technical artifact.  
+It is a biological reality.
 :::
+
+---
 
 ## Inspect sample metadata
 
@@ -67,11 +80,14 @@ head(phyloseq::sample_data(ps))
 ```
 
 :::cdi-message
-Metadata provides the biological and experimental context.
+Metadata provides biological and experimental context.
 
-Without metadata, abundance values have no meaning. Visualization is
-always performed relative to metadata.
+Without metadata, abundance values have no meaning.
+
+Visualization is always performed relative to metadata.
 :::
+
+---
 
 ## Inspect taxonomy
 
@@ -82,15 +98,20 @@ head(phyloseq::tax_table(ps))
 :::cdi-message
 Taxonomy links sequence variants to biological hierarchy.
 
-Aggregation (for example genus-level barplots) depends entirely on this
-mapping. If taxonomy is inconsistent, interpretation becomes unstable.
+Aggregation (for example genus-level barplots) depends entirely on this mapping.
+
+If taxonomy is inconsistent, interpretation becomes unstable.
 :::
+
+---
 
 ## Structural integrity
 
 ```{r check-structural-integrity}
-all(phyloseq::sample_names(ps) == 
-    rownames(phyloseq::sample_data(ps)))
+all(
+  phyloseq::sample_names(ps) ==
+  rownames(phyloseq::sample_data(ps))
+)
 ```
 
 :::cdi-message
@@ -98,7 +119,3 @@ A valid `phyloseq` object guarantees alignment across components.
 
 Many downstream errors originate from mismatched sample identifiers.
 :::
-
-<!-- :::next
-Next → [Data Structure and Prevalence](03-data-structure-and-prevalence.qmd)
-::: -->

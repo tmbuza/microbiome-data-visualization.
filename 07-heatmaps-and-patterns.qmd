@@ -1,5 +1,12 @@
 # Heatmaps and Patterns
 
+:::cdi-message
+- **ID:** MICRO-L07
+- **Type:** Lesson
+- **Audience:** Public
+- **Theme:** Heatmaps, clustering patterns, and responsible interpretation
+:::
+
 Heatmaps summarize many taxa across many samples at once.
 
 They are useful for pattern discovery, but they are also easy to overread.
@@ -18,34 +25,15 @@ This chapter focuses on:
 - reading clustering and patterns responsibly
 - avoiding common heatmap interpretation traps
 
----
-
 ## Load data
 
 ```{r load-phyloseq-object}
 ps <- base::readRDS("data/moving-pictures-ps.rds")
+
+# CDI shared theme + palette (used across chapters)
+source("scripts/R/cdi-plot-theme.R")
+pal <- cdi_palette()
 ```
-
----
-
-## A CDI plotting theme for this chapter
-
-```{r cdi-theme}
-cdi_teal   <- "#036281"
-cdi_yellow <- "#f7c546"
-cdi_muted  <- "#475569"
-
-cdi_plot_theme <- function(base_size = 13) {
-  ggplot2::theme_bw(base_size = base_size) +
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(face = "bold", hjust = 0.5),
-      plot.subtitle = ggplot2::element_text(color = cdi_muted, hjust = 0.5),
-      panel.grid.minor = ggplot2::element_blank()
-    )
-}
-```
-
----
 
 ## Decide what to heatmap
 
@@ -61,8 +49,6 @@ In this guide we will:
 2. Aggregate to the **Genus** level
 3. Select the top genera by **mean relative abundance**
 4. Visualize patterns across **body site** as a compact heatmap
-
----
 
 ## Transform and aggregate to genus
 
@@ -81,8 +67,6 @@ Aggregation improves readability, but it hides within-genus variation.
 Heatmap patterns should be interpreted at the chosen resolution.
 :::
 
----
-
 ## Select top genera
 
 ```{r select-top-genera}
@@ -95,11 +79,9 @@ ps_top <- phyloseq::prune_taxa(top_genera, ps_genus)
 phyloseq::ntaxa(ps_top)
 ```
 
----
+## Build a compact table for visualization
 
-## Build a compact matrix for visualization
-
-We will compute mean relative abundance per body site and genus.
+We compute mean relative abundance per body site and genus.
 This reduces clutter while keeping patterns interpretable.
 
 ```{r build-heatmap-table}
@@ -116,7 +98,7 @@ if (length(body_col) == 0) {
 df_comp$body_site <- df_comp[[body_col[1]]]
 
 df_mean <- df_comp |>
-  dplyr::filter(!is.na(body_site)) |>
+  dplyr::filter(!is.na(body_site) & body_site != "") |>
   dplyr::group_by(body_site, Genus) |>
   dplyr::summarise(mean_abundance = mean(Abundance, na.rm = TRUE), .groups = "drop")
 
@@ -143,29 +125,27 @@ base::dir.create("outputs/tables", recursive = TRUE, showWarnings = FALSE)
 readr::write_csv(df_mean, "outputs/tables/heatmap-mean-body-site-genus.csv")
 ```
 
----
-
 ## Heatmap of mean genus composition by body site
 
-We use a **viridis** scale (option `"magma"`) because it provides strong contrast and is broadly readable.
+We use a **viridis** scale (`option = "magma"`) because it provides strong contrast and is broadly readable.
 
-```{r plot-heatmap-mean, fig.width=11, fig.height=4.8}
+```{r plot-heatmap-mean, fig.width=12, fig.height=5}
 ggplot2::ggplot(df_mean, ggplot2::aes(x = Genus, y = body_site, fill = mean_abundance)) +
   ggplot2::geom_tile(color = "white", linewidth = 0.25) +
-  ggplot2::scale_fill_viridis_c(option = "magma", name = "Mean rel. abundance") +
+  ggplot2::scale_fill_viridis_c(
+    option = "magma",
+    name = "Mean rel.\nabundance"
+  ) +
   ggplot2::labs(
     title = "Mean genus composition heatmap",
     subtitle = "Aggregated by body site (relative abundance)"
   ) +
-  ggplot2::theme_bw(base_size = 12) +
+  cdi_theme() +
   ggplot2::theme(
-    plot.title = ggplot2::element_text(face = "bold", hjust = 0.5),
-    plot.subtitle = ggplot2::element_text(color = cdi_muted, hjust = 0.5),
     axis.title = ggplot2::element_blank(),
     axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1, size = 9),
     axis.text.y = ggplot2::element_text(size = 10),
     panel.grid = ggplot2::element_blank(),
-    legend.title = ggplot2::element_text(face = "bold"),
     legend.position = "right"
   )
 ```
@@ -179,8 +159,6 @@ How to read this heatmap:
 
 Remember: these are **relative abundances** averaged across samples.
 :::
-
----
 
 ## Avoid common heatmap traps
 
@@ -196,4 +174,3 @@ A heatmap is a summary view.
 
 Treat it as a pattern-finding tool, then follow up with targeted plots and formal testing.
 :::
-

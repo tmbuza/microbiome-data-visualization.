@@ -13,6 +13,13 @@ The goal was to build a reliable interpretation habit:
 - use heatmaps to inspect patterns, not to declare conclusions
 
 :::cdi-message
+- **ID:** MICRO-L08
+- **Type:** Lesson
+- **Audience:** Public
+- **Theme:** Wrap-up, reproducibility habits, and transition to inference
+:::
+
+:::cdi-message
 A figure is not the conclusion.
 
 A figure is a structured view of the data under explicit assumptions.
@@ -77,53 +84,76 @@ The fix is almost always upstream, not in the plotting code.
 
 ---
 
-## Save a small “results snapshot” (R → Python)
+## Save a small results snapshot
 
 A practical habit is to export a small results bundle that can be reloaded later.
 
-We will export:
+This guide already writes key tables under `outputs/tables/`.
+Here, we create a compact snapshot folder for quick reuse.
 
-- library size summary
-- alpha diversity table
+We export:
+
+- library size table
+- a minimal alpha diversity table
 - ordination coordinates
 
 ```{r export-snapshot}
-dir.create("outputs/snapshots", recursive = TRUE, showWarnings = FALSE)
+base::dir.create("outputs/snapshots", recursive = TRUE, showWarnings = FALSE)
 
-ps <- readRDS("data/moving-pictures-ps.rds")
+ps <- base::readRDS("data/moving-pictures-ps.rds")
 
+# ----------------------------
 # Library size
+# ----------------------------
 lib_size <- phyloseq::sample_sums(ps)
-df_lib <- data.frame(sample_id = names(lib_size), library_size = as.numeric(lib_size))
+
+df_lib <- data.frame(
+  sample_id = names(lib_size),
+  library_size = as.numeric(lib_size),
+  stringsAsFactors = FALSE
+)
+
 readr::write_csv(df_lib, "outputs/snapshots/library-size.csv")
 
-# Alpha diversity (simple, reproducible)
+# ----------------------------
+# Alpha diversity (minimal)
+# ----------------------------
 otu <- methods::as(phyloseq::otu_table(ps), "matrix")
-if (!phyloseq::taxa_are_rows(ps)) otu <- t(otu)
+if (!phyloseq::taxa_are_rows(ps)) {
+  otu <- t(otu)
+}
 
 observed <- colSums(otu > 0)
 shannon  <- vegan::diversity(t(otu), index = "shannon")
 
 alpha_df <- data.frame(
   sample_id = colnames(otu),
-  observed = observed,
-  shannon = shannon,
+  observed = as.numeric(observed),
+  shannon = as.numeric(shannon),
   stringsAsFactors = FALSE
 )
 
 meta <- data.frame(phyloseq::sample_data(ps))
 meta$sample_id <- rownames(meta)
-alpha_df <- merge(alpha_df, meta, by = "sample_id", all.x = TRUE)
+
+alpha_df <- base::merge(alpha_df, meta, by = "sample_id", all.x = TRUE)
 
 cols <- names(alpha_df)
 body_col <- intersect(c("body-site", "body.site", "body_site"), cols)
-if (length(body_col) == 0) stop("Body site column not found in metadata.")
-alpha_df$body_site <- alpha_df[[body_col[1]]]
+
+if (length(body_col) == 0) {
+  stop("Body site column not found. Available columns: ", paste(cols, collapse = ", "))
+}
+
+alpha_df$body_site <- as.character(alpha_df[[body_col[1]]])
 
 readr::write_csv(alpha_df, "outputs/snapshots/alpha-diversity-mini.csv")
 
-# Ordination coordinates (PCoA, Bray–Curtis, rel abundance)
+# ----------------------------
+# Ordination coordinates (PCoA; Bray–Curtis; relative abundance)
+# ----------------------------
 ps_rel <- phyloseq::transform_sample_counts(ps, function(x) x / sum(x))
+
 dist_bc <- phyloseq::distance(ps_rel, method = "bray")
 ord <- phyloseq::ordinate(ps_rel, method = "PCoA", distance = dist_bc)
 
@@ -131,29 +161,20 @@ coords <- as.data.frame(ord$vectors[, 1:2])
 colnames(coords) <- c("PC1", "PC2")
 coords$sample_id <- rownames(coords)
 
-ord_df <- merge(coords, meta, by = "sample_id", all.x = TRUE)
-cols <- names(ord_df)
-body_col <- intersect(c("body-site", "body.site", "body_site"), cols)
-if (length(body_col) == 0) stop("Body site column not found in ordination metadata.")
-ord_df$body_site <- ord_df[[body_col[1]]]
+ord_df <- base::merge(coords, meta, by = "sample_id", all.x = TRUE)
+
+cols2 <- names(ord_df)
+body_col2 <- intersect(c("body-site", "body.site", "body_site"), cols2)
+
+if (length(body_col2) == 0) {
+  stop("Body site column not found in ordination metadata. Available columns: ", paste(cols2, collapse = ", "))
+}
+
+ord_df$body_site <- as.character(ord_df[[body_col2[1]]])
 
 readr::write_csv(ord_df, "outputs/snapshots/ordination-pcoa.csv")
 
-c("library-size.csv", "alpha-diversity-mini.csv", "ordination-pcoa.csv")
-```
-
-```{python quick-snapshot-peek}
-import pandas as pd
-
-lib = pd.read_csv("outputs/snapshots/library-size.csv")
-alpha = pd.read_csv("outputs/snapshots/alpha-diversity-mini.csv")
-ordn = pd.read_csv("outputs/snapshots/ordination-pcoa.csv")
-
-print("Library size rows:", lib.shape[0])
-print("Alpha diversity rows:", alpha.shape[0])
-print("Ordination rows:", ordn.shape[0])
-
-alpha[["sample_id","body_site","observed","shannon"]].head()
+base::list.files("outputs/snapshots")
 ```
 
 :::cdi-message
@@ -165,7 +186,7 @@ This is a small habit that prevents large confusion later.
 
 ---
 
-## Where to Go Next
+## Where to go next
 
 If you are continuing with this dataset:
 
@@ -179,8 +200,6 @@ If you are starting a new dataset:
 - Rebuild a canonical object.
 - Keep transformation and filtering decisions explicit and version controlled.
 
----
-
 :::cdi-message
 The fastest way to improve interpretation is not adding more plots.
 
@@ -189,48 +208,43 @@ It is strengthening the logic that connects each plot to a defensible biological
 
 ---
 
-## Beyond Descriptive Visualization
+## Beyond descriptive visualization
 
 This guide focused on structural clarity and visualization:
 
-- composition  
-- diversity  
-- ordination  
-- clustering patterns  
+- composition
+- diversity
+- ordination
+- heatmap patterns
 
 These approaches describe what the data look like.
 
 They do not yet address:
 
-- Whether differences are statistically robust  
-- How much variance is explained by specific variables  
-- How covariates influence interpretation  
-- How to reconcile conflicting signals across metrics  
+- whether differences are statistically robust
+- how much variance is explained by specific variables
+- how covariates influence interpretation
+- how to reconcile conflicting signals across metrics
 
-These questions require inferential modeling and more advanced analytical design.
+Those questions require inferential modeling and more advanced analytical design.
 
-The extended continuation of this guide explores:
+The premium continuation extends into:
 
-- PERMANOVA and multivariate hypothesis testing  
-- constrained ordination  
-- variance partitioning  
-- model-based approaches  
-- structured interpretation workflows  
+- PERMANOVA and multivariate hypothesis testing
+- constrained ordination
+- variance partitioning
+- model-based approaches
+- structured interpretation workflows
 
 The objective is not to add more figures.
-
 It is to reason more rigorously about biological signal.
 
 ---
 
-## Continue the Learning Path
+## Continue the learning path
 
 The premium continuation of this guide expands these topics in depth:
 
 → https://complexdatainsights.com/microbiome-premium
 
 It builds from the same dataset and structure, but moves from descriptive visualization toward formal inference and analytical decision-making.
-
-<!-- :::next
-Next → return to the start: [Preface](01-preface.qmd)
-::: -->

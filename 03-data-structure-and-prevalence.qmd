@@ -1,4 +1,11 @@
-# Data structure and prevalence
+# Data structure and prevalence {#data-structure-prevalence}
+
+:::cdi-message
+- **ID:** MICRO-L03
+- **Type:** Lesson
+- **Audience:** Public
+- **Theme:** Sparsity, sequencing depth, and prevalence filtering
+:::
 
 Microbiome count data is structurally sparse and uneven.
 
@@ -16,40 +23,20 @@ ps <- readRDS("data/moving-pictures-ps.rds")
 
 ## Plot theme
 
-```{r cdi-plot-theme}
-# ------------------------------------------------------------
-# CDI Modern Plot Theme (Free Track Standard)
-# ------------------------------------------------------------
-cdi_teal <- "#036281"
-cdi_yellow <- "#f7c546"
-cdi_muted <- "#475569"
+This guide uses a consistent CDI plotting theme. It is defined once and reused across lessons.
 
-cdi_plot_theme <- function(base_size = 14) {
-  ggplot2::theme_minimal(base_size = base_size) +
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(
-        size = 22,
-        face = "bold",
-        hjust = 0.5
-      ),
-      plot.subtitle = ggplot2::element_text(
-        size = 16,
-        hjust = 0.5,
-        margin = ggplot2::margin(b = 10)
-      ),
-      axis.title = ggplot2::element_text(
-        face = "bold"
-      ),
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank()
-    )
-}
+```{r source-cdi-theme}
+source("scripts/R/cdi-plot-theme.R")
+cdi_teal   <- "#036281"
+cdi_yellow <- "#f7c546"
+cdi_muted  <- "#475569"
 ```
 
 ## Sparsity
 
 ```{r compute-sparsity}
 otu <- methods::as(phyloseq::otu_table(ps), "matrix")
+
 if (!phyloseq::taxa_are_rows(ps)) {
   otu <- t(otu)
 }
@@ -68,7 +55,6 @@ Filtering decisions are not cosmetic. They determine which patterns become visib
 
 ```{r compute-library-size}
 lib_size <- phyloseq::sample_sums(ps)
-summary(lib_size)
 
 df_lib <- data.frame(
   sample_id = names(lib_size),
@@ -99,7 +85,7 @@ ggplot2::ggplot(df_lib, ggplot2::aes(x = library_size)) +
     x = "Library size (total reads per sample)",
     y = "Density"
   ) +
-  cdi_plot_theme() +
+  cdi_theme() +
   ggplot2::theme(
     plot.subtitle = ggplot2::element_text(color = cdi_muted)
   )
@@ -117,6 +103,7 @@ Normalization is required for fair comparison across samples.
 detection <- 1
 
 taxa_prev_n <- rowSums(otu >= detection)
+
 taxa_prev_df <- data.frame(
   taxon = rownames(otu),
   prevalence_n = taxa_prev_n,
@@ -124,10 +111,10 @@ taxa_prev_df <- data.frame(
   stringsAsFactors = FALSE
 )
 
-summary(taxa_prev_df$prevalence_n)
-
 dir.create("outputs/tables", recursive = TRUE, showWarnings = FALSE)
 readr::write_csv(taxa_prev_df, "outputs/tables/taxa-prevalence.csv")
+
+summary(taxa_prev_df$prevalence_n)
 ```
 
 ### Prevalence distribution
@@ -147,9 +134,12 @@ ggplot2::ggplot(taxa_prev_df, ggplot2::aes(x = prevalence_n)) +
     x = "Number of samples detected",
     y = "Number of taxa"
   ) +
-  cdi_plot_theme()
+  cdi_theme() +
+  ggplot2::theme(
+    plot.subtitle = ggplot2::element_text(color = cdi_muted)
+  )
 
-# ECDF view (often clearer for sparse data)
+# ECDF view
 ggplot2::ggplot(taxa_prev_df, ggplot2::aes(x = prevalence_n)) +
   ggplot2::stat_ecdf(geom = "step", color = cdi_teal, linewidth = 1.2) +
   ggplot2::labs(
@@ -158,13 +148,17 @@ ggplot2::ggplot(taxa_prev_df, ggplot2::aes(x = prevalence_n)) +
     x = "Number of samples detected",
     y = "Fraction of taxa"
   ) +
-  cdi_plot_theme()
+  cdi_theme() +
+  ggplot2::theme(
+    plot.subtitle = ggplot2::element_text(color = cdi_muted)
+  )
 ```
 
 :::cdi-message
 Most taxa are observed in only a small fraction of samples.
 
 Prevalence filtering improves clarity, but it also changes the feature space.
+
 Filtering rules must be stated explicitly.
 :::
 
@@ -174,9 +168,13 @@ Filtering rules must be stated explicitly.
 min_prev_frac <- 0.10
 
 keep_taxa <- taxa_prev_df$taxon[taxa_prev_df$prevalence_frac >= min_prev_frac]
+
 ps_prev <- phyloseq::prune_taxa(keep_taxa, ps)
 
-c(original_taxa = phyloseq::ntaxa(ps), after_filter = phyloseq::ntaxa(ps_prev))
+c(
+  original_taxa = phyloseq::ntaxa(ps),
+  after_filter = phyloseq::ntaxa(ps_prev)
+)
 ```
 
 :::cdi-message
@@ -197,7 +195,3 @@ After transformation, each sample sums to 1.
 
 This enables clearer visualization, but does not remove compositional constraints.
 :::
-
-<!-- :::next
-Next → [Composition Visualization](04-composition-visualization.qmd)
-::: -->

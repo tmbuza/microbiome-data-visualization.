@@ -1,12 +1,11 @@
-# Composition Visualization
-```{=html}
-<style>
-/* Chapter 07: center figure captions */
-.quarto-figure figcaption,
-figure figcaption{ text-align:center; }
-</style>
-```
+# Composition Visualization {#composition-visualization}
 
+:::cdi-message
+- **ID:** MICRO-L04
+- **Type:** Lesson
+- **Audience:** Public
+- **Theme:** Relative abundance, aggregation choices, and compositional constraints
+:::
 
 Composition plots are often the first figures shown in microbiome studies.
 
@@ -21,17 +20,18 @@ They show proportions constrained to sum to one.
 
 This chapter focuses on:
 
-- transforming counts to relative abundance
-- aggregating taxa to a chosen rank
-- visualizing composition across metadata groups
-- understanding compositional limitations
+- transforming counts to relative abundance  
+- aggregating taxa to a chosen rank  
+- visualizing composition across metadata groups  
+- understanding compositional limitations  
 
 ## Load data
 
 ```{r load-phyloseq}
-library(phyloseq)
-
 ps <- readRDS("data/moving-pictures-ps.rds")
+
+source("scripts/R/cdi-plot-theme.R")
+pal <- cdi_palette()
 ```
 
 ## Transform to relative abundance
@@ -94,19 +94,30 @@ df_comp <- phyloseq::psmelt(ps_top)
 # Detect column names robustly (psmelt can vary by dataset)
 cols <- names(df_comp)
 
-sample_col <- if ("Sample" %in% cols) "Sample" else if ("SampleID" %in% cols) "SampleID" else if ("sample_id" %in% cols) "sample_id" else NA_character_
-body_col   <- if ("body-site" %in% cols) "body-site" else if ("body.site" %in% cols) "body.site" else if ("body_site" %in% cols) "body_site" else NA_character_
+sample_col <- dplyr::case_when(
+  "Sample" %in% cols ~ "Sample",
+  "SampleID" %in% cols ~ "SampleID",
+  "sample_id" %in% cols ~ "sample_id",
+  TRUE ~ NA_character_
+)
+
+body_col <- dplyr::case_when(
+  "body-site" %in% cols ~ "body-site",
+  "body.site" %in% cols ~ "body.site",
+  "body_site" %in% cols ~ "body_site",
+  TRUE ~ NA_character_
+)
 
 if (is.na(sample_col) || is.na(body_col)) {
   stop(
-    "Expected columns not found in psmelt output.
-",
-    "Available columns: ", paste(cols, collapse = ", "), "
-",
+    "Expected columns not found in psmelt output. ",
+    "Available columns: ", paste(cols, collapse = ", "), ". ",
     "Missing: ",
-    paste(c(if (is.na(sample_col)) "Sample/SampleID" else NULL,
-            if (is.na(body_col)) "body-site/body.site/body_site" else NULL),
-          collapse = ", ")
+    paste(
+      c(if (is.na(sample_col)) "Sample/SampleID/sample_id" else NULL,
+        if (is.na(body_col)) "body-site/body.site/body_site" else NULL),
+      collapse = ", "
+    )
   )
 }
 
@@ -115,7 +126,7 @@ df_comp <- df_comp[, c(sample_col, "Abundance", "Genus", body_col)]
 names(df_comp) <- c("Sample", "Abundance", "Genus", "body_site")
 
 # Mean relative abundance by (body_site, Genus)
-df_mean <- aggregate(
+df_mean <- stats::aggregate(
   Abundance ~ body_site + Genus,
   data = df_comp,
   FUN = mean
@@ -147,24 +158,19 @@ df_mean$body_site <- factor(df_mean$body_site, levels = body_order)
 
 ggplot2::ggplot(df_mean, ggplot2::aes(x = body_site, y = Abundance, fill = Genus)) +
   ggplot2::geom_col(width = 0.75, color = "white", linewidth = 0.25) +
+  ggplot2::scale_fill_brewer(palette = "Set3") +
   ggplot2::labs(
     title = "Mean genus composition by body site",
     subtitle = "Top genera only; proportions are relative abundance",
     x = "Body site",
     y = "Mean relative abundance"
   ) +
-  ggplot2::theme_minimal(base_size = 14) +
+  cdi_theme() +
   ggplot2::theme(
-    plot.title = ggplot2::element_text(face = "bold", hjust = 0.5),
-    plot.subtitle = ggplot2::element_text(hjust = 0.5, color = "#475569"),
-    axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5, size = 9),
-    panel.grid.minor = ggplot2::element_blank(),
-    legend.title = ggplot2::element_text(face = "bold"),
+    axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, vjust = 1),
     legend.position = "right"
-  ) +
-  ggplot2::scale_fill_brewer(palette = "Set3")
+  )
 ```
-
 
 :::cdi-message
 These bars show average proportions, not absolute microbial load.
@@ -195,19 +201,14 @@ ggplot2::ggplot(df_heat, ggplot2::aes(x = Genus, y = body_site, fill = Abundance
     y = "Body site",
     fill = NULL
   ) +
-  ggplot2::scale_fill_viridis_c(
-    option = "magma",
-    name = "Mean rel.\nabund."
-  ) +
-  ggplot2::theme_minimal(base_size = 14) +
+  cdi_scale_fill_heat(option = "magma", show_legend = TRUE) +
+  cdi_theme() +
   ggplot2::theme(
-    plot.title = ggplot2::element_text(face = "bold", hjust = 0.5),
-    plot.subtitle = ggplot2::element_text(hjust = 0.5, color = "#475569"),
-    axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5, size = 9),
-    panel.grid = ggplot2::element_blank()
+    axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5),
+    panel.grid = ggplot2::element_blank(),
+    legend.position = "right"
   )
 ```
-
 
 :::cdi-message
 Heatmaps emphasize patterns of dominance and absence across groups.
@@ -219,13 +220,12 @@ They are sensitive to aggregation level and filtering choices.
 
 Composition plots:
 
-- are constrained by constant-sum scaling
-- cannot reveal absolute abundance changes
-- are sensitive to filtering and aggregation level
+- are constrained by constant-sum scaling  
+- cannot reveal absolute abundance changes  
+- are sensitive to filtering and aggregation level  
 
 :::cdi-message
 Composition plots answer: "What proportion of the community does each taxon occupy?"
 
 They do not answer: "Did the taxon increase in absolute abundance?"
 :::
-

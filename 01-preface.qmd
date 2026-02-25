@@ -1,12 +1,10 @@
 # Preface {-#preface}
 
 :::cdi-message
-This guide focuses on interpretation.
-
-We do not only generate plots.
-We explain what they represent,
-what assumptions they carry,
-and what conclusions are justified.
+- **ID:** MICRO-L01
+- **Type:** Lesson
+- **Audience:** Public
+- **Theme:** Preface and structured visual interpretation
 :::
 
 ## Welcome {-}
@@ -110,7 +108,3 @@ A figure is not a conclusion.
 
 Interpretation requires understanding structure before pattern.
 :::
-<!-- 
-:::next
-Next → [Datasets](#datasets)
-::: -->

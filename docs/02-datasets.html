@@ -175,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-ordination-plots.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Ordination Plots</span></a>
+  <a href="./06-ordination-plots.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Ordination plots</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -228,6 +228,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<div class="cdi-message">
+<ul>
+<li><strong>ID:</strong> MICRO-L02</li>
+<li><strong>Type:</strong> Lesson</li>
+<li><strong>Audience:</strong> Public</li>
+<li><strong>Theme:</strong> Canonical phyloseq object and structural alignment</li>
+</ul>
+</div>
 <p>This guide uses the <strong>QIIME2 Moving Pictures</strong> demo dataset.</p>
 <p>The data are downloaded as QIIME2 artifacts and converted into a single <code>phyloseq</code> object using reproducible scripts:</p>
 <ul>
@@ -236,26 +244,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>Those scripts:</p>
 <ul>
-<li>download the feature table, taxonomy, and metadata</li>
-<li>align sample identifiers</li>
-<li>construct a validated <code>phyloseq</code> object</li>
+<li>download the feature table, taxonomy, and metadata<br>
+</li>
+<li>align sample identifiers<br>
+</li>
+<li>construct a validated <code>phyloseq</code> object<br>
+</li>
 <li>save a canonical <code>.rds</code> file for reuse across chapters</li>
 </ul>
 <p>From this point onward, we work with one structured object.</p>
+<hr>
 <section id="load-the-canonical-object" class="level2">
 <h2 class="anchored" data-anchor-id="load-the-canonical-object">Load the canonical object</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(phyloseq)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/moving-pictures-ps.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/moving-pictures-ps.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cdi-message">
 <p>A microbiome dataset is not a single table.</p>
-<p>It is a coordinated structure containing: - an abundance matrix<br>
-- sample-level metadata<br>
-- taxonomic annotation</p>
+<p>It is a coordinated structure containing:</p>
+<ul>
+<li>an abundance matrix<br>
+</li>
+<li>sample-level metadata<br>
+</li>
+<li>taxonomic annotation</li>
+</ul>
 <p>All components must align exactly.</p>
 </div>
+<hr>
 </section>
 <section id="inspect-the-otu-table" class="level2">
 <h2 class="anchored" data-anchor-id="inspect-the-otu-table">Inspect the OTU table</h2>
@@ -287,8 +303,10 @@ acfe4c003905a7074aeaf385b78ad9e0      0      0    104     50     47     0
 <li>Values are raw read counts</li>
 </ul>
 <p>Most entries are zero.</p>
-<p>Sparsity is not a technical artifact. It is a biological reality.</p>
+<p>Sparsity is not a technical artifact.<br>
+It is a biological reality.</p>
 </div>
+<hr>
 </section>
 <section id="inspect-sample-metadata" class="level2">
 <h2 class="anchored" data-anchor-id="inspect-sample-metadata">Inspect sample metadata</h2>
@@ -312,9 +330,11 @@ L1S57                         No                          84</code></pre>
 </div>
 </div>
 <div class="cdi-message">
-<p>Metadata provides the biological and experimental context.</p>
-<p>Without metadata, abundance values have no meaning. Visualization is always performed relative to metadata.</p>
+<p>Metadata provides biological and experimental context.</p>
+<p>Without metadata, abundance values have no meaning.</p>
+<p>Visualization is always performed relative to metadata.</p>
 </div>
+<hr>
 </section>
 <section id="inspect-taxonomy" class="level2">
 <h2 class="anchored" data-anchor-id="inspect-taxonomy">Inspect taxonomy</h2>
@@ -347,14 +367,18 @@ acfe4c003905a7074aeaf385b78ad9e0 "Ruminococcaceae" "Gemmiger"    "formicilis"
 </div>
 <div class="cdi-message">
 <p>Taxonomy links sequence variants to biological hierarchy.</p>
-<p>Aggregation (for example genus-level barplots) depends entirely on this mapping. If taxonomy is inconsistent, interpretation becomes unstable.</p>
+<p>Aggregation (for example genus-level barplots) depends entirely on this mapping.</p>
+<p>If taxonomy is inconsistent, interpretation becomes unstable.</p>
 </div>
+<hr>
 </section>
 <section id="structural-integrity" class="level2">
 <h2 class="anchored" data-anchor-id="structural-integrity">Structural integrity</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(phyloseq<span class="sc">::</span><span class="fu">sample_names</span>(ps) <span class="sc">==</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rownames</span>(phyloseq<span class="sc">::</span><span class="fu">sample_data</span>(ps)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  phyloseq<span class="sc">::</span><span class="fu">sample_names</span>(ps) <span class="sc">==</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames</span>(phyloseq<span class="sc">::</span><span class="fu">sample_data</span>(ps))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] TRUE</code></pre>
 </div>
@@ -363,9 +387,6 @@ acfe4c003905a7074aeaf385b78ad9e0 "Ruminococcaceae" "Gemmiger"    "formicilis"
 <p>A valid <code>phyloseq</code> object guarantees alignment across components.</p>
 <p>Many downstream errors originate from mismatched sample identifiers.</p>
 </div>
-<!-- :::next
-Next → [Data Structure and Prevalence](03-data-structure-and-prevalence.qmd)
-::: -->
 
 
 </section>

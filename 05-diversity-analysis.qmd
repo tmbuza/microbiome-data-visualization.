@@ -1,4 +1,11 @@
-# Diversity Analysis
+# Diversity Analysis {#diversity-analysis}
+
+:::cdi-message
+- **ID:** MICRO-L05
+- **Type:** Lesson
+- **Audience:** Public
+- **Theme:** Alpha diversity, sequencing depth, and responsible interpretation
+:::
 
 Alpha diversity summaries are common in microbiome studies.
 
@@ -6,9 +13,9 @@ They are useful, but only when interpreted carefully.
 
 This chapter focuses on:
 
-- what alpha diversity measures
-- how sequencing depth affects diversity
-- how to interpret group differences responsibly
+- what alpha diversity measures  
+- how sequencing depth affects diversity  
+- how to interpret group differences responsibly  
 
 :::cdi-message
 Alpha diversity is not a single concept.
@@ -22,6 +29,9 @@ Always interpret alpha diversity alongside sequencing depth and preprocessing ch
 
 ```{r load-phyloseq-object}
 ps <- readRDS("data/moving-pictures-ps.rds")
+
+source("scripts/R/cdi-plot-theme.R")
+pal <- cdi_palette()
 ```
 
 ## Check sequencing depth
@@ -36,27 +46,23 @@ lib_df <- data.frame(
   library_size = as.numeric(lib_size),
   stringsAsFactors = FALSE
 )
+
+dir.create("outputs/tables", recursive = TRUE, showWarnings = FALSE)
+readr::write_csv(lib_df, "outputs/tables/library-size.csv")
 ```
 
-```{r plot-library-size, fig.width=10, fig.height=6}
+```{r plot-library-size}
 ggplot2::ggplot(lib_df, ggplot2::aes(x = library_size)) +
-  ggplot2::geom_histogram(
-    bins = 25,
-    fill = "#036281",
-    color = "white",
-    linewidth = 0.3
-  ) +
+  cdi_geom_histogram(bins = 25, colored = FALSE) +
   ggplot2::labs(
     title = "Sequencing depth distribution",
     subtitle = "Library size varies across samples",
     x = "Library size (total reads per sample)",
     y = "Number of samples"
   ) +
-  ggplot2::theme_bw(base_size = 13) +
+  cdi_theme() +
   ggplot2::theme(
-    plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
-    plot.subtitle = ggplot2::element_text(hjust = 0.5, color = "#475569"),
-    panel.grid.minor = ggplot2::element_blank()
+    legend.position = "none"
   )
 ```
 
@@ -67,24 +73,18 @@ Common strategies include rarefaction (for specific use cases) or model-based ap
 For this guide, we focus on interpretation and keep preprocessing explicit.
 :::
 
-### Save sequencing depth table (for reproducibility)
-
-```{r export-library-size}
-dir.create("outputs/tables", recursive = TRUE, showWarnings = FALSE)
-readr::write_csv(lib_df, "outputs/tables/library-size.csv")
-```
-
 ## Compute alpha diversity
 
 We compute four common metrics:
 
-- **Observed richness**: number of detected taxa
-- **Shannon**: richness + evenness
-- **Simpson**: dominance-weighted diversity
-- **Pielou**: evenness derived from Shannon
+- **Observed richness**: number of detected taxa  
+- **Shannon**: richness plus evenness  
+- **Simpson**: dominance-weighted diversity  
+- **Pielou**: evenness derived from Shannon  
 
 ```{r compute-alpha}
 otu <- methods::as(phyloseq::otu_table(ps), "matrix")
+
 if (!phyloseq::taxa_are_rows(ps)) {
   otu <- t(otu)
 }
@@ -125,13 +125,14 @@ alpha_df <- alpha_df[!is.na(alpha_df$body_site) & alpha_df$body_site != "", , dr
 ### Save alpha diversity table (for reproducibility)
 
 ```{r export-alpha}
+dir.create("outputs/tables", recursive = TRUE, showWarnings = FALSE)
 readr::write_csv(alpha_df, "outputs/tables/alpha-diversity.csv")
 ```
 
 :::cdi-message
 Alpha diversity values are not “good” or “bad” by themselves.
 
-They only become meaningful when compared across groups with a clear question and a consistent preprocessing pipeline.
+They become meaningful only when compared across groups with a clear question and a consistent preprocessing pipeline.
 :::
 
 ## Alpha diversity by body site
@@ -153,11 +154,11 @@ alpha_long$metric <- factor(
 )
 ```
 
-```{r plot-alpha-by-body-site, fig.width=11, fig.height=7}
+```{r plot-alpha-by-body-site, fig.width=12, fig.height=8, dpi=150}
 ggplot2::ggplot(alpha_long, ggplot2::aes(x = body_site, y = value)) +
   ggplot2::geom_boxplot(
-    fill = "#e6f2f6",
-    color = "#0f172a",
+    fill = pal$bg,
+    color = pal$ink,
     linewidth = 0.35,
     outlier.shape = NA
   ) +
@@ -165,8 +166,8 @@ ggplot2::ggplot(alpha_long, ggplot2::aes(x = body_site, y = value)) +
     ggplot2::aes(color = body_site),
     width = 0.18,
     height = 0,
-    alpha = 0.55,
-    size = 1.8,
+    alpha = 0.50,
+    size = 1.7,
     show.legend = FALSE
   ) +
   ggplot2::facet_wrap(~ metric, scales = "free_y", ncol = 2) +
@@ -177,24 +178,20 @@ ggplot2::ggplot(alpha_long, ggplot2::aes(x = body_site, y = value)) +
     y = NULL
   ) +
   ggplot2::scale_color_brewer(palette = "Dark2") +
-  ggplot2::theme_bw(base_size = 13) +
+  cdi_theme() +
   ggplot2::theme(
-    plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
-    plot.subtitle = ggplot2::element_text(hjust = 0.5, color = "#475569"),
-    panel.grid.minor = ggplot2::element_blank(),
     axis.text.x = ggplot2::element_text(angle = 25, hjust = 1),
-    strip.background = ggplot2::element_rect(fill = "white", color = "white"),
-    strip.text = ggplot2::element_text(face = "bold")
+    legend.position = "none"
   )
 ```
 
 :::cdi-message
 What to look for:
 
-- **Observed richness** is most sensitive to sequencing depth and rare taxa.
-- **Shannon** increases when samples have many taxa with balanced abundances.
-- **Simpson** is driven by dominance; it changes when a few taxa take over.
-- **Pielou** isolates evenness; it can drop when communities become uneven.
+- **Observed richness** is most sensitive to sequencing depth and rare taxa.  
+- **Shannon** increases when samples have many taxa with balanced abundances.  
+- **Simpson** is driven by dominance; it changes when a few taxa take over.  
+- **Pielou** isolates evenness; it can drop when communities become uneven.  
 
 If metrics disagree, that is a signal to interpret, not an error to hide.
 :::
@@ -205,9 +202,8 @@ This guide is descriptive. It shows what the data look like and how common summa
 
 To make inferential claims, you would typically add:
 
-- statistical testing under appropriate assumptions
-- covariate handling (confounding, repeated measures)
-- multivariate modeling for community-level change
+- statistical testing under appropriate assumptions  
+- covariate handling (confounding, repeated measures)  
+- multivariate modeling for community-level change  
 
 Those topics belong in the premium continuation.
-
